@@ -1,0 +1,85 @@
+---
+import { getPhotographyPageContent } from "../../data/storyblokContent";
+
+const photographyPage = await getPhotographyPageContent();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Photography | Ellis-Joyce</title>
+    <meta
+      name="description"
+      content="Trip-organized field photography by Ellis-Joyce with a clean path for future portfolio growth."
+    />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body>
+    <div class="page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/blog">Blog</a>
+          <a class="nav-link" href="/weddinghome">Wedding Legacy</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="intro-panel" data-reveal>
+          <h1>Photography</h1>
+        </section>
+
+        <section class="section trip-grid" data-reveal>
+          {
+            photographyPage.trips.map((trip) => (
+              <article class="trip-card">
+                <a class="trip-cover" href={trip.legacyPath}>
+                  <img src={trip.coverImage} alt={`${trip.title} cover`} loading="lazy" decoding="async" />
+                  <div class="trip-cover-overlay">
+                    <p>{trip.year}</p>
+                    <h2>{trip.title}</h2>
+                  </div>
+                </a>
+                <div class="trip-highlight-grid">
+                  {trip.highlights.map((imageSrc) => (
+                    <img src={imageSrc} alt={`${trip.title} highlight`} loading="lazy" decoding="async" />
+                  ))}
+                </div>
+                <a class="trip-link" href={trip.legacyPath}>
+                  Open full trip gallery
+                </a>
+              </article>
+            ))
+          }
+        </section>
+
+        <section class="section bird-atlas-callout" data-reveal>
+          <article class="bird-atlas-card">
+            <p class="kicker">Bird Database</p>
+            <h2>Bird Atlas</h2>
+            <p>
+              Explore a phylogeny-organized ABA checklist with personal seen tracking and uploaded photo coverage.
+            </p>
+            <a class="btn primary" href="/photography/birds">
+              Open Bird Atlas
+            </a>
+          </article>
+        </section>
+
+      </main>
+    </div>
+    <script is:inline src="/assets/js/site.js" defer></script>
+  </body>
+</html>

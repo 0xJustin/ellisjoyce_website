@@ -1,0 +1,257 @@
+---
+import { getBirdInventoryData, type BirdInventoryEntry } from "../../../data/birds/birdInventory";
+
+interface BirdFamilyGroup {
+  family: string;
+  species: BirdInventoryEntry[];
+}
+
+interface BirdOrderGroup {
+  order: string;
+  speciesCount: number;
+  families: BirdFamilyGroup[];
+}
+
+const inventory = getBirdInventoryData();
+const species = inventory.species;
+const taxonomy = buildTaxonomy(species);
+
+const defaultVisible = species.filter((bird) => bird.abaCode <= 3);
+const defaultSeen = defaultVisible.filter((bird) => bird.seen).length;
+const defaultPhotographed = defaultVisible.filter((bird) => bird.hasPhoto).length;
+const defaultSeenNeedsPhoto = defaultVisible.filter((bird) => bird.seen && !bird.hasPhoto).length;
+
+const taxonomySource = [
+  `ABA v${inventory.metadata.abaVersion ?? "unknown"}`,
+  inventory.metadata.abaDate ? `(${inventory.metadata.abaDate})` : null,
+  inventory.metadata.ebirdTaxonomyVersion
+    ? `eBird/Clements taxonomy ${inventory.metadata.ebirdTaxonomyVersion}`
+    : "eBird/Clements taxonomy",
+]
+  .filter(Boolean)
+  .join(" ");
+
+function buildTaxonomy(rows: BirdInventoryEntry[]): BirdOrderGroup[] {
+  const orderMap = new Map<string, Map<string, BirdInventoryEntry[]>>();
+
+  for (const bird of rows) {
+    let familyMap = orderMap.get(bird.order);
+    if (!familyMap) {
+      familyMap = new Map<string, BirdInventoryEntry[]>();
+      orderMap.set(bird.order, familyMap);
+    }
+
+    let familySpecies = familyMap.get(bird.family);
+    if (!familySpecies) {
+      familySpecies = [];
+      familyMap.set(bird.family, familySpecies);
+    }
+
+    familySpecies.push(bird);
+  }
+
+  return Array.from(orderMap.entries()).map(([order, families]) => {
+    const familyGroups = Array.from(families.entries()).map(([family, groupSpecies]) => ({
+      family,
+      species: groupSpecies,
+    }));
+
+    return {
+      order,
+      speciesCount: familyGroups.reduce((acc, group) => acc + group.species.length, 0),
+      families: familyGroups,
+    };
+  });
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bird Atlas | Ellis-Joyce Photography</title>
+    <meta
+      name="description"
+      content="A phylogeny-organized personal ABA bird atlas with seen status and photo coverage tracking."
+    />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body>
+    <div class="page-wrap bird-page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/photography">Photography</a>
+          <a class="nav-link" href="/blog">Blog</a>
+        </nav>
+      </header>
+
+      <main class="bird-main">
+        <section class="bird-hero" data-reveal>
+          <p class="bird-hero-kicker">Ellis-Joyce Bird Atlas</p>
+          <h1>ABA Checklist, But Personal.</h1>
+          <p>
+            Phylogeny-first organization inspired by Cornell workflows. Track your sightings, surface target species,
+            and audit photo coverage in one place.
+          </p>
+          <div class="bird-hero-meta">
+            <span>{taxonomySource}</span>
+            <span>{inventory.metadata.speciesCount} tracked species</span>
+          </div>
+        </section>
+
+        <section class="bird-controls" data-bird-controls data-reveal>
+          <div class="bird-controls-top">
+            <div class="bird-mode-toggle" role="group" aria-label="Rarity visibility">
+              <button class="bird-mode-button is-active" type="button" data-rarity-mode="common">
+                Common (1-3)
+              </button>
+              <button class="bird-mode-button" type="button" data-rarity-mode="rare">
+                Rare (1-5)
+              </button>
+            </div>
+            <label class="bird-search-shell" for="bird-search-input">
+              <span>Search</span>
+              <input
+                id="bird-search-input"
+                name="bird-search"
+                type="search"
+                autocomplete="off"
+                placeholder="Species, scientific name, family, order"
+                data-bird-search
+              />
+            </label>
+          </div>
+
+          <div class="bird-filter-row" role="group" aria-label="Bird filters">
+            <button class="bird-filter-button is-active" type="button" data-bird-filter="all">All</button>
+            <button class="bird-filter-button" type="button" data-bird-filter="seen">Seen</button>
+            <button class="bird-filter-button" type="button" data-bird-filter="unseen">Not Seen</button>
+            <button class="bird-filter-button" type="button" data-bird-filter="photographed">Photographed</button>
+            <button class="bird-filter-button" type="button" data-bird-filter="needs-photo">Seen, Needs Photo</button>
+          </div>
+
+          <p class="bird-manual-note">
+            Seen status and photo links are manually controlled in
+            <code>src/data/birds/personalStatus.ts</code>
+            and
+            <code>src/data/birds/personalPhotos.ts</code>.
+          </p>
+        </section>
+
+        <section class="bird-stats" data-bird-stats data-reveal>
+          <article class="bird-stat-card">
+            <p class="bird-stat-label">Visible Species</p>
+            <strong class="bird-stat-value" data-stat-total>{defaultVisible.length}</strong>
+          </article>
+          <article class="bird-stat-card">
+            <p class="bird-stat-label">Seen</p>
+            <strong class="bird-stat-value" data-stat-seen>{defaultSeen}</strong>
+          </article>
+          <article class="bird-stat-card">
+            <p class="bird-stat-label">Photographed</p>
+            <strong class="bird-stat-value" data-stat-photo>{defaultPhotographed}</strong>
+          </article>
+          <article class="bird-stat-card">
+            <p class="bird-stat-label">Seen, Needs Photo</p>
+            <strong class="bird-stat-value" data-stat-backlog>{defaultSeenNeedsPhoto}</strong>
+          </article>
+        </section>
+
+        <section class="bird-taxonomy" data-bird-list-root data-reveal>
+          <p class="bird-empty-state" data-bird-empty hidden>No species match your current filters.</p>
+
+          {
+            taxonomy.map((orderGroup) => (
+              <details class="bird-order" open data-bird-order>
+                <summary>
+                  <span class="bird-order-label">{orderGroup.order}</span>
+                  <span class="bird-order-count">{orderGroup.speciesCount} species</span>
+                </summary>
+
+                <div class="bird-order-body">
+                  {orderGroup.families.map((familyGroup) => (
+                    <section class="bird-family">
+                      <header>
+                        <h2>{familyGroup.family}</h2>
+                        <p>{familyGroup.species.length} species</p>
+                      </header>
+
+                      <div class="bird-species-grid">
+                        {familyGroup.species.map((bird) => (
+                          <article
+                            class={`bird-species${bird.seen ? " is-seen" : ""}${bird.hasPhoto ? " has-photo" : ""}`}
+                            data-bird-row
+                            data-rarity={bird.abaCode <= 3 ? "common" : "rare"}
+                            data-seen={bird.seen ? "true" : "false"}
+                            data-photo={bird.hasPhoto ? "true" : "false"}
+                            data-common-name={bird.commonName.toLowerCase()}
+                            data-scientific-name={bird.scientificName.toLowerCase()}
+                            data-family={bird.family.toLowerCase()}
+                            data-order={bird.order.toLowerCase()}
+                          >
+                            <div class="bird-species-main">
+                              <div class="bird-code-chip">ABA {bird.abaCode}</div>
+                              <h3>{bird.commonName}</h3>
+                              <p class="bird-scientific-name"><em>{bird.scientificName}</em></p>
+                              <p class="bird-species-id">
+                                {bird.speciesCode ? `eBird: ${bird.speciesCode}` : `ABA: ${bird.alphaCode}`}
+                              </p>
+                            </div>
+
+                            <div class="bird-state-chips">
+                              <span class={`bird-state-chip ${bird.seen ? "is-on" : "is-off"}`}>
+                                {bird.seen ? "Seen" : "Not Seen"}
+                              </span>
+                              <span class={`bird-state-chip ${bird.hasPhoto ? "is-on" : "is-off"}`}>
+                                {bird.hasPhoto ? `${bird.photoCount} Photo${bird.photoCount > 1 ? "s" : ""}` : "No Photo"}
+                              </span>
+                            </div>
+
+                            {
+                              bird.hasPhoto && bird.photos[0] ? (
+                                <figure class="bird-photo-preview">
+                                  <img src={bird.photos[0].src} alt={bird.photos[0].alt} loading="lazy" decoding="async" />
+                                  <figcaption>
+                                    {bird.photos[0].location ?? "Uploaded photo"}
+                                    {bird.photos[0].capturedOn ? ` • ${bird.photos[0].capturedOn}` : ""}
+                                  </figcaption>
+                                </figure>
+                              ) : (
+                                <div class="bird-photo-preview is-empty">
+                                  <p>Upload a photo to complete this entry.</p>
+                                </div>
+                              )
+                            }
+
+                            {
+                              bird.personalNotes ? <p class="bird-note">{bird.personalNotes}</p> : null
+                            }
+                          </article>
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              </details>
+            ))
+          }
+        </section>
+      </main>
+    </div>
+
+    <script is:inline src="/assets/js/site.js" defer></script>
+    <script is:inline src="/assets/js/birds.js" defer></script>
+  </body>
+</html>

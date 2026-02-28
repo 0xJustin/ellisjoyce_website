@@ -1,0 +1,39 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "This repository contains a self-hosted static replacement for `www.ellis-joyce.com` with two priorities: - preserve legacy sentimental pages at original URLs - establish a clean, extensible base for CV/blog/photography growth",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "check": "astro check --tsconfig tsconfig.json",
+    "build": "astro build",
+    "preview": "astro preview",
+    "syncLegacy": "bash scripts/import_legacy_pages.sh",
+    "syncPhotos": "bash scripts/copy_featured_photos.sh",
+    "computeRewilding": "python scripts/compute_rewilding_summary.py",
+    "buildBirdCatalog": "python3 scripts/build_bird_catalog.py",
+    "prepareDist": "bash scripts/prepare_dist.sh",
+    "verifyRoutes": "bash scripts/check_route_coverage.sh dist",
+    "test": "echo \"No tests yet\"",
+    "deployS3": "bash scripts/deploy_dist_to_s3.sh",
+    "smoke": "bash scripts/smoke_test_routes.sh",
+    "smokeLocal": "bash scripts/local_dist_smoke.sh",
+    "releaseS3": "bash scripts/release_to_s3.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.0",
+    "@storyblok/astro": "^7.3.9",
+    "astro": "^5.17.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.6",
+    "firebase-tools": "^15.5.1",
+    "typescript": "^5.9.3"
+  }
+}
