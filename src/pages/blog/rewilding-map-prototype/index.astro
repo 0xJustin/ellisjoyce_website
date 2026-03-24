@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rewilding Opportunity Map Prototype | Ellis-Joyce</title>
+    <meta
+      name="description"
+      content="Interactive prototype mapping cultivated pasture and estimated rewilding opportunity using GPW and Hayek datasets."
+    />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.1.1/dist/maplibre-gl.css" />
+  </head>
+  <body>
+    <div class="page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/blog">Back to Blog</a>
+          <a class="nav-link" href="/photography">Photography</a>
+          <a class="nav-link" href="/weddinghome">Wedding Legacy</a>
+        </nav>
+      </header>
+
+      <main class="rewilding-shell">
+        <section class="intro-panel" data-reveal>
+          <p class="eyebrow">Prototype</p>
+          <h1>Global Rewilding Opportunity Explorer</h1>
+          <p>
+            This map links Global Pasture Watch (2000-2024) with a global rewilding-opportunity summary derived
+            from Hayek et al. Use it as a quantitative scaffold for the post narrative.
+          </p>
+          <p class="note">
+            Carbon values are stock opportunity estimates (GtCO2 equivalent), not annual removals.
+          </p>
+        </section>
+
+        <section class="section" data-reveal>
+          <div class="map-panel">
+            <article class="card map-controls" aria-label="Map controls">
+              <p class="kicker">Controls</p>
+              <h2>Layer and Scenario</h2>
+              <div class="map-control-grid">
+                <label for="gpwLayer">GPW layer</label>
+                <select id="gpwLayer">
+                  <option value="cultivated">Cultivated grassland probability</option>
+                  <option value="natural">Natural/semi-natural probability</option>
+                  <option value="shrub">Open shrubland probability</option>
+                  <option value="dominant">Dominant class map</option>
+                </select>
+
+                <label for="gpwYear">Year <span id="gpwYearValue">2024</span></label>
+                <input id="gpwYear" type="range" min="2000" max="2024" step="1" value="2024" />
+
+                <label for="rewildShare">
+                  Rewilded share assumption <span id="rewildShareValue">50%</span>
+                </label>
+                <input id="rewildShare" type="range" min="0" max="100" step="5" value="50" />
+              </div>
+
+              <div class="map-metric-grid" aria-live="polite">
+                <div class="map-metric">
+                  <p>Estimated rewilded area</p>
+                  <strong id="areaMetric">-- Mha</strong>
+                </div>
+                <div class="map-metric">
+                  <p>Carbon opportunity (median)</p>
+                  <strong id="carbonMetric">-- GtCO2</strong>
+                </div>
+                <div class="map-metric">
+                  <p>Carbon range (low-high)</p>
+                  <strong id="carbonRangeMetric">-- to -- GtCO2</strong>
+                </div>
+                <div class="map-metric">
+                  <p>Share of animal land</p>
+                  <strong id="shareMetric">--%</strong>
+                </div>
+              </div>
+
+              <p class="map-status" id="mapStatus">Loading catalog and summary data...</p>
+            </article>
+
+            <article class="card map-stage">
+              <div id="rewildingMap" class="map-canvas" aria-label="Rewilding map"></div>
+              <div class="map-legend" id="mapLegend">
+                <p><strong>Cultivated probability</strong> 0% to 100%</p>
+                <p>Source: Global Pasture Watch v2 (2000-2024)</p>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script is:inline src="/assets/js/site.js" defer></script>
+    <script is:inline src="https://unpkg.com/maplibre-gl@5.1.1/dist/maplibre-gl.js" defer></script>
+    <script is:inline>
+      (() => {
+        const TITILER_TILE_ENDPOINT = "https://titiler.xyz/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png";
+        const GPW_CATALOG_URL = "/data/gpw-ggc-30m-v2.csv";
+        const SUMMARY_URL = "/data/rewilding-summary-2024.json";
+
+        const layerSelect = document.getElementById("gpwLayer");
+        const yearInput = document.getElementById("gpwYear");
+        const yearValue = document.getElementById("gpwYearValue");
+        const shareInput = document.getElementById("rewildShare");
+        const shareValue = document.getElementById("rewildShareValue");
+        const areaMetric = document.getElementById("areaMetric");
+        const carbonMetric = document.getElementById("carbonMetric");
+        const carbonRangeMetric = document.getElementById("carbonRangeMetric");
+        const shareMetric = document.getElementById("shareMetric");
+        const mapStatus = document.getElementById("mapStatus");
+        const mapLegend = document.getElementById("mapLegend");
+
+        const GPW_LAYERS = {
+          cultivated: {
+            match: "gpw_cultiv.grassland_",
+            title: "Cultivated probability",
+            legend: "0% to 100%",
+            params: { rescale: "0,100", colormap_name: "ylorrd" },
+          },
+          natural: {
+            match: "gpw_nat.semi.grassland_",
+            title: "Natural/semi-natural probability",
+            legend: "0% to 100%",
+            params: { rescale: "0,100", colormap_name: "greens" },
+          },
+          shrub: {
+            match: "gpw_open.shrubland_",
+            title: "Open shrubland probability",
+            legend: "0% to 100%",
+            params: { rescale: "0,100", colormap_name: "cividis" },
+          },
+          dominant: {
+            match: "gpw_grassland_rf.med.filt.bthr_c_",
+            title: "Dominant class",
+            legend: "0 other, 1 cultivated, 2 natural, 3 shrubland",
+            params: { rescale: "0,3", colormap_name: "viridis" },
+          },
+        };
+
+        const catalog = {
+          cultivated: new Map(),
+          natural: new Map(),
+          shrub: new Map(),
+          dominant: new Map(),
+        };
+
+        let summary = null;
+        let map = null;
+
+        function formatNumber(value, digits = 1) {
+          return new Intl.NumberFormat("en-US", {
+            minimumFractionDigits: digits,
+            maximumFractionDigits: digits,
+          }).format(value);
+        }
+
+        function renderLegend() {
+          const layerKey = layerSelect.value;
+          const layer = GPW_LAYERS[layerKey];
+          mapLegend.innerHTML = `
+            <p><strong>${layer.title}</strong> ${layer.legend}</p>
+            <p>Source: Global Pasture Watch v2 (2000-2024)</p>
+          `;
+        }
+
+        function renderMetrics() {
+          if (!summary) return;
+
+          const share = Number(shareInput.value) / 100;
+          const med = summary.summary.median;
+          const low = summary.summary.low;
+          const high = summary.summary.high;
+
+          const area = med.weighted_rewildable_area_mha * share;
+          const carbon = med.weighted_carbon_opportunity_gtco2 * share;
+          const carbonLow = low.weighted_carbon_opportunity_gtco2 * share;
+          const carbonHigh = high.weighted_carbon_opportunity_gtco2 * share;
+          const landShare = med.weighted_rewildable_share_of_animal_land * share * 100;
+
+          areaMetric.textContent = `${formatNumber(area, 1)} Mha`;
+          carbonMetric.textContent = `${formatNumber(carbon, 2)} GtCO2`;
+          carbonRangeMetric.textContent = `${formatNumber(carbonLow, 2)} to ${formatNumber(carbonHigh, 2)} GtCO2`;
+          shareMetric.textContent = `${formatNumber(landShare, 2)}%`;
+        }
+
+        function buildTileUrl(layerKey, year) {
+          const layer = GPW_LAYERS[layerKey];
+          const cogUrl = catalog[layerKey].get(year);
+          if (!cogUrl) return null;
+
+          const params = new URLSearchParams({ url: cogUrl });
+          Object.entries(layer.params).forEach(([key, value]) => params.set(key, value));
+          return `${TITILER_TILE_ENDPOINT}?${params.toString()}`;
+        }
+
+        function setOverlayLayer() {
+          if (!map) return;
+
+          const layerKey = layerSelect.value;
+          const year = Number(yearInput.value);
+          const tileUrl = buildTileUrl(layerKey, year);
+
+          if (!tileUrl) {
+            mapStatus.textContent = `No GPW layer found for ${layerKey} ${year}.`;
+            return;
+          }
+
+          if (map.getLayer("gpw-overlay")) map.removeLayer("gpw-overlay");
+          if (map.getSource("gpw-overlay")) map.removeSource("gpw-overlay");
+
+          map.addSource("gpw-overlay", {
+            type: "raster",
+            tiles: [tileUrl],
+            tileSize: 256,
+            attribution:
+              'GPW via WRI + Land & Carbon Lab, rendered with <a href="https://titiler.xyz" target="_blank" rel="noopener">TiTiler</a>',
+          });
+
+          map.addLayer({
+            id: "gpw-overlay",
+            type: "raster",
+            source: "gpw-overlay",
+            paint: {
+              "raster-opacity": layerKey === "dominant" ? 0.75 : 0.8,
+            },
+          });
+
+          mapStatus.textContent = `Viewing ${layerKey} layer for ${year}.`;
+          renderLegend();
+        }
+
+        async function loadCatalog() {
+          const response = await fetch(GPW_CATALOG_URL);
+          if (!response.ok) {
+            throw new Error(`Catalog request failed: ${response.status}`);
+          }
+
+          const text = await response.text();
+          const rows = text.trim().split(/\r?\n/).slice(1);
+
+          for (const row of rows) {
+            const parts = row.split(",");
+            if (parts.length < 3) continue;
+            const year = Number(parts[0]);
+            const url = parts[2];
+
+            for (const [key, layer] of Object.entries(GPW_LAYERS)) {
+              if (url.includes(layer.match)) {
+                catalog[key].set(year, url);
+                break;
+              }
+            }
+          }
+        }
+
+        async function loadSummary() {
+          const response = await fetch(SUMMARY_URL);
+          if (!response.ok) {
+            throw new Error(`Summary request failed: ${response.status}`);
+          }
+          summary = await response.json();
+        }
+
+        function attachEvents() {
+          yearInput.addEventListener("input", () => {
+            yearValue.textContent = yearInput.value;
+            setOverlayLayer();
+          });
+
+          layerSelect.addEventListener("change", setOverlayLayer);
+
+          shareInput.addEventListener("input", () => {
+            shareValue.textContent = `${shareInput.value}%`;
+            renderMetrics();
+          });
+        }
+
+        function createMap() {
+          map = new maplibregl.Map({
+            container: "rewildingMap",
+            style: {
+              version: 8,
+              sources: {
+                osm: {
+                  type: "raster",
+                  tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+                  tileSize: 256,
+                  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+                },
+              },
+              layers: [
+                {
+                  id: "osm",
+                  type: "raster",
+                  source: "osm",
+                },
+              ],
+            },
+            center: [11, 16],
+            zoom: 1.55,
+            minZoom: 1,
+          });
+
+          map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+          map.on("load", setOverlayLayer);
+        }
+
+        async function start() {
+          try {
+            await Promise.all([loadCatalog(), loadSummary()]);
+            renderMetrics();
+            attachEvents();
+            createMap();
+            mapStatus.textContent = "Loaded GPW catalog and model summary.";
+          } catch (error) {
+            mapStatus.textContent = `Failed to initialize prototype: ${String(error)}`;
+          }
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", start, { once: true });
+        } else {
+          start();
+        }
+      })();
+    </script>
+  </body>
+</html>

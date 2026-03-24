@@ -1,7 +1,104 @@
 ---
-import { getPhotographyPageContent } from "../../data/storyblokContent";
+import type { PhotographyTrip } from "../../data/photographyTrips";
+import type { PhotographyPhotoRecord } from "../../data/photographyPhotos";
+import { getPhotographyGalleryData } from "../../data/photographyGalleryData";
 
-const photographyPage = await getPhotographyPageContent();
+const galleryData = getPhotographyGalleryData();
+const tripYear = (trip: PhotographyTrip): number => {
+  const matchedYear = String(trip.year || "").match(/(\d{4})/);
+  if (!matchedYear) {
+    return 0;
+  }
+
+  const numeric = Number(matchedYear[1]);
+  return Number.isFinite(numeric) ? numeric : 0;
+};
+const sortedTrips = [...galleryData.trips].sort((left, right) => {
+  const yearDiff = tripYear(right) - tripYear(left);
+  if (yearDiff !== 0) {
+    return yearDiff;
+  }
+
+  return left.title.localeCompare(right.title);
+});
+const showTripInBasePage = (trip: PhotographyTrip): boolean =>
+  typeof trip.showInBasePage === "boolean" ? trip.showInBasePage : trip.showOnPhotographyPage !== false;
+const showTripInCarousel = (trip: PhotographyTrip): boolean =>
+  typeof trip.showInCarousel === "boolean" ? trip.showInCarousel : trip.showOnPhotographyPage !== false;
+const baseTrips = sortedTrips.filter(showTripInBasePage);
+const carouselTrips = sortedTrips.filter(showTripInCarousel);
+const activeTripSlugs = new Set([...baseTrips, ...carouselTrips].map((trip) => trip.slug));
+const activeTrips = sortedTrips.filter((trip) => activeTripSlugs.has(trip.slug));
+const photoTimestamp = (photo: PhotographyPhotoRecord): number => {
+  const parsed = Date.parse(String(photo.capturedOn || ""));
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+const sortedPhotos = [...galleryData.photos]
+  .filter((photo) => activeTripSlugs.has(photo.tripSlug))
+  .sort((left, right) => {
+    const dateDiff = photoTimestamp(right) - photoTimestamp(left);
+    if (dateDiff !== 0) {
+      return dateDiff;
+    }
+
+    return left.id.localeCompare(right.id);
+  });
+const photosByTrip = new Map<string, PhotographyPhotoRecord[]>();
+for (const photo of sortedPhotos) {
+  const tripPhotos = photosByTrip.get(photo.tripSlug);
+  if (tripPhotos) {
+    tripPhotos.push(photo);
+  } else {
+    photosByTrip.set(photo.tripSlug, [photo]);
+  }
+}
+const photoRating = (photo: PhotographyPhotoRecord): number => {
+  const numeric = Number(photo.rating);
+  if (!Number.isFinite(numeric)) {
+    return 0;
+  }
+  return Math.max(0, Math.min(5, Math.round(numeric)));
+};
+const comparePhotosByRating = (left: PhotographyPhotoRecord, right: PhotographyPhotoRecord): number => {
+  const ratingDiff = photoRating(right) - photoRating(left);
+  if (ratingDiff !== 0) {
+    return ratingDiff;
+  }
+
+  const dateDiff = photoTimestamp(right) - photoTimestamp(left);
+  if (dateDiff !== 0) {
+    return dateDiff;
+  }
+
+  return left.id.localeCompare(right.id);
+};
+const hasFeaturedTag = (photo: PhotographyPhotoRecord): boolean =>
+  Array.isArray(photo.tags) && photo.tags.includes("featured");
+const isFavoritePhoto = (photo: PhotographyPhotoRecord): boolean =>
+  Boolean(photo.isFavorite) || hasFeaturedTag(photo);
+const spotlightPhotos = [...sortedPhotos].filter(isFavoritePhoto).sort(comparePhotosByRating).slice(0, 24);
+const photoRatingLabel = (photo: PhotographyPhotoRecord): string => {
+  const rating = photoRating(photo);
+  return rating > 0 ? `${"\u2605".repeat(rating)} ${rating}/5` : "Unrated";
+};
+const photoMetaLabel = (photo: PhotographyPhotoRecord): string =>
+  [photo.subject ?? "", photo.location ?? "", photo.capturedOn ?? ""].filter(Boolean).join(" • ");
+const tripLinkFor = (trip: PhotographyTrip): string => {
+  const path = String(trip.legacyPath || "").trim();
+  if (!path) {
+    return `/photography#trip-${trip.slug}`;
+  }
+
+  if (/^https?:\/\//i.test(path) || /^mailto:/i.test(path)) {
+    return path;
+  }
+
+  return path.startsWith("/") ? path : `/${path}`;
+};
+const gallerySeed = {
+  trips: galleryData.trips,
+  photos: galleryData.photos,
+};
 ---
 
 <!doctype html>
@@ -36,50 +133,170 @@ const photographyPage = await getPhotographyPageContent();
         </nav>
       </header>
 
-      <main>
+      <main data-photo-gallery-root>
         <section class="intro-panel" data-reveal>
           <h1>Photography</h1>
         </section>
 
-        <section class="section trip-grid" data-reveal>
-          {
-            photographyPage.trips.map((trip) => (
-              <article class="trip-card">
-                <a class="trip-cover" href={trip.legacyPath}>
-                  <img src={trip.coverImage} alt={`${trip.title} cover`} loading="lazy" decoding="async" />
-                  <div class="trip-cover-overlay">
-                    <p>{trip.year}</p>
-                    <h2>{trip.title}</h2>
-                  </div>
-                </a>
-                <div class="trip-highlight-grid">
-                  {trip.highlights.map((imageSrc) => (
-                    <img src={imageSrc} alt={`${trip.title} highlight`} loading="lazy" decoding="async" />
-                  ))}
-                </div>
-                <a class="trip-link" href={trip.legacyPath}>
-                  Open full trip gallery
-                </a>
-              </article>
-            ))
-          }
-        </section>
-
         <section class="section bird-atlas-callout" data-reveal>
           <article class="bird-atlas-card">
-            <p class="kicker">Bird Database</p>
-            <h2>Bird Atlas</h2>
-            <p>
-              Explore a phylogeny-organized ABA checklist with personal seen tracking and uploaded photo coverage.
-            </p>
-            <a class="btn primary" href="/photography/birds">
-              Open Bird Atlas
+            <div class="bird-atlas-card-copy">
+              <h2>Bird Map</h2>
+              <p>
+                Track my quest to get a 5-star photo of every bird in America!
+              </p>
+              <a class="btn primary" href="/photography/birds">
+                Open Bird Map
+              </a>
+            </div>
+            <a class="bird-atlas-preview-link" href="/photography/birds" aria-label="Preview the Bird Map">
+              <img
+                src="/assets/images/photography/bird-atlas-preview-seen-states.png?v=20260310-2"
+                alt="State-level Bird Map preview in Seen view"
+                loading="lazy"
+                decoding="async"
+              />
             </a>
           </article>
         </section>
 
+        <section class="section photo-featured" data-reveal>
+          <div class="section-head">
+            <h2 class="section-title">Favorites!</h2>
+          </div>
+          <div class="favorites-photo-grid" data-photo-gallery-favorites-grid>
+            {
+              spotlightPhotos.map((photo) => {
+                const trip = activeTrips.find((entry) => entry.slug === photo.tripSlug);
+                const tripTitle = trip?.title ?? photo.tripSlug;
+                return (
+                  <figure class="favorites-photo-card">
+                    <a
+                      href={photo.src}
+                      data-photo-modal
+                      data-photo-full-res={photo.src}
+                      data-photo-title={tripTitle}
+                      data-photo-caption={photoMetaLabel(photo)}
+                      data-photo-rating={photoRatingLabel(photo)}
+                      data-photo-iso={photo.iso !== undefined ? String(photo.iso) : undefined}
+                      data-photo-shutter={photo.shutterSpeed ?? undefined}
+                      data-photo-aperture={photo.aperture ?? undefined}
+                      data-photo-camera={photo.camera ?? undefined}
+                      data-photo-lens={photo.lens ?? undefined}
+                    >
+                      <img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" />
+                    </a>
+                    <figcaption>
+                      <strong>{tripTitle}</strong>
+                      <span>{[photoRatingLabel(photo), photo.capturedOn ?? "", photo.location ?? ""].filter(Boolean).join(" • ")}</span>
+                    </figcaption>
+                  </figure>
+                );
+              })
+            }
+          </div>
+        </section>
+
+        <section class="section" data-reveal>
+          <div class="section-head">
+            <h2 class="section-title">Trip Galleries</h2>
+          </div>
+          <div class="trip-stream-list" data-photo-gallery-trip-stream>
+            {
+              baseTrips.map((trip) => {
+                const tripPhotos = [...(photosByTrip.get(trip.slug) ?? [])].sort(comparePhotosByRating).slice(0, 10);
+                if (tripPhotos.length === 0) {
+                  return null;
+                }
+
+                return (
+                  <article class="trip-stream-card" data-trip-slug={trip.slug}>
+                    <header class="trip-stream-head">
+                      <div>
+                        <h3>{trip.title}</h3>
+                      </div>
+                      <a class="trip-link" href={tripLinkFor(trip)}>
+                        Open full trip gallery
+                      </a>
+                    </header>
+
+                    <div class="trip-stream-grid">
+                      {tripPhotos.map((photo) => (
+                        <figure class="trip-photo-card">
+                          <a
+                            href={photo.src}
+                            data-photo-modal
+                            data-photo-full-res={photo.src}
+                            data-photo-title={trip.title}
+                            data-photo-caption={photoMetaLabel(photo)}
+                            data-photo-rating={photoRatingLabel(photo)}
+                            data-photo-iso={photo.iso !== undefined ? String(photo.iso) : undefined}
+                            data-photo-shutter={photo.shutterSpeed ?? undefined}
+                            data-photo-aperture={photo.aperture ?? undefined}
+                            data-photo-camera={photo.camera ?? undefined}
+                            data-photo-lens={photo.lens ?? undefined}
+                          >
+                            <img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" />
+                          </a>
+                          <figcaption>
+                            <strong>{photoRatingLabel(photo)}</strong>
+                            <span>{photoMetaLabel(photo)}</span>
+                          </figcaption>
+                        </figure>
+                      ))}
+                    </div>
+                  </article>
+                );
+              })
+            }
+          </div>
+        </section>
+
+        <section class="section" data-reveal>
+          <div class="section-head">
+            <h2 class="section-title">Trips</h2>
+          </div>
+          <div class="trip-carousel-shell">
+            <div class="trip-carousel-track" data-photo-gallery-trip-carousel-track>
+              {
+                carouselTrips.map((trip) => (
+                  <article class="trip-card" data-trip-slug={trip.slug}>
+                    <a class="trip-cover" href={tripLinkFor(trip)}>
+                      <img src={trip.coverImage} alt={`${trip.title} cover`} loading="lazy" decoding="async" />
+                      <div class="trip-cover-overlay">
+                        <p>{trip.year}</p>
+                        <h2>{trip.title}</h2>
+                      </div>
+                    </a>
+                    <div class="trip-highlight-grid">
+                      {trip.highlights.map((imageSrc) => (
+                        <img src={imageSrc} alt={`${trip.title} highlight`} loading="lazy" decoding="async" />
+                      ))}
+                    </div>
+                    <a class="trip-link" href={tripLinkFor(trip)}>
+                      Open full trip gallery
+                    </a>
+                  </article>
+                ))
+              }
+            </div>
+          </div>
+        </section>
+
       </main>
     </div>
+    <script
+      id="photo-gallery-seed"
+      type="application/json"
+      is:inline
+      set:html={JSON.stringify(gallerySeed)}
+    ></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-app-compat.js" defer></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-firestore-compat.js" defer></script>
+    <script is:inline src="/__/firebase/init.js" defer></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/exifr/dist/full.umd.js" defer></script>
     <script is:inline src="/assets/js/site.js" defer></script>
+    <script is:inline src="/assets/js/photo-lightbox.js?v=20260309-2" defer></script>
+    <script is:inline src="/assets/js/photography-page.js?v=20260310-5" defer></script>
   </body>
 </html>

@@ -14,6 +14,7 @@
     "syncPhotos": "bash scripts/copy_featured_photos.sh",
     "computeRewilding": "python scripts/compute_rewilding_summary.py",
     "buildBirdCatalog": "python3 scripts/build_bird_catalog.py",
+    "syncEbirdSeen": "node scripts/sync_ebird_seen.mjs",
     "prepareDist": "bash scripts/prepare_dist.sh",
     "verifyRoutes": "bash scripts/check_route_coverage.sh dist",
     "test": "echo \"No tests yet\"",

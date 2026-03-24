@@ -1,0 +1,14 @@
+[
+  {
+    "Condition": { "KeyPrefixEquals": "home" },
+    "Redirect": { "ReplaceKeyWith": "", "HttpRedirectCode": "301" }
+  },
+  {
+    "Condition": { "KeyPrefixEquals": "cart" },
+    "Redirect": { "ReplaceKeyWith": "photography/", "HttpRedirectCode": "302" }
+  },
+  {
+    "Condition": { "KeyPrefixEquals": "search" },
+    "Redirect": { "ReplaceKeyWith": "blog/", "HttpRedirectCode": "302" }
+  }
+]

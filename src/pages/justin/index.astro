@@ -1,0 +1,87 @@
+---
+const cvPath = "/assets/docs/justin-cv.pdf";
+
+const socialLinks = [
+  {
+    label: "Google Scholar",
+    href: "https://scholar.google.com/citations?user=VxtooeUAAAAJ&hl=en",
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/justin-m-joyce/",
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/justinjoyce75/",
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Justin Ellis-Joyce | CV</title>
+    <meta name="description" content="Justin Ellis-Joyce CV and research profile links." />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body class="profile-shell">
+    <div class="page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/gwen">Gwen CV</a>
+          <a class="nav-link" href="/blog">Blog</a>
+          <a class="nav-link" href="/photography">Photography</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="profile-minimal" data-reveal>
+          <p class="eyebrow">Justin Ellis-Joyce</p>
+
+          <div class="profile-link-row" aria-label="External profiles">
+            {
+              socialLinks.map((link) => (
+                <a class="profile-link-pill" href={link.href} target="_blank" rel="noopener noreferrer">
+                  {link.label}
+                </a>
+              ))
+            }
+          </div>
+
+          <div class="profile-actions">
+            <a class="profile-action-link" href={cvPath} target="_blank" rel="noopener noreferrer">
+              Open CV
+            </a>
+            <span aria-hidden="true">/</span>
+            <a class="profile-action-link" href={cvPath} download>Download PDF</a>
+          </div>
+        </section>
+
+        <section class="section" data-reveal>
+          <div class="cv-viewer">
+            <iframe class="cv-iframe" src={`${cvPath}#view=FitH`} title="Justin Ellis-Joyce CV"></iframe>
+          </div>
+          <p class="cv-fallback-note">
+            If the embedded preview does not load in your browser, use <a href={cvPath}>Open CV</a>.
+          </p>
+        </section>
+      </main>
+
+      <p class="footer">last updated February 2026</p>
+    </div>
+    <script is:inline src="/assets/js/site.js" defer></script>
+  </body>
+</html>

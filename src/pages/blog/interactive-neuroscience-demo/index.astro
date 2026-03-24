@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Interactive Neuroscience Demo | Ellis-Joyce</title>
+    <meta
+      name="description"
+      content="Interactive spiking-neuron style visualization to prototype blog interactivity."
+    />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body>
+    <div class="page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="brand" href="/">Ellis-Joyce</a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/blog">Back to Blog</a>
+          <a class="nav-link" href="/justin">Justin CV</a>
+          <a class="nav-link" href="/photography">Photography</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero" data-reveal>
+          <p class="eyebrow">Prototype</p>
+          <h1>Spiking Activity Playground</h1>
+          <p>
+            This page demonstrates the interaction model for future neuroscience posts. It simulates a
+            small firing-rate process and plots spikes in real time.
+          </p>
+        </section>
+
+        <section class="section split" data-reveal>
+          <article>
+            <div class="canvas-wrap">
+              <canvas id="spikeCanvas" width="900" height="260" aria-label="Spike raster simulation"></canvas>
+            </div>
+            <p class="metric" id="summary">Mean spikes/sec: 0.0 | Current threshold: 0.50</p>
+          </article>
+          <article class="card">
+            <p class="kicker">Controls</p>
+            <h3>Explore a simple model</h3>
+            <div class="control-grid">
+              <label>
+                Baseline input
+                <input id="baseline" type="range" min="0" max="1" step="0.01" value="0.45" />
+              </label>
+              <label>
+                Noise amplitude
+                <input id="noise" type="range" min="0" max="1" step="0.01" value="0.35" />
+              </label>
+              <label>
+                Spike threshold
+                <input id="threshold" type="range" min="0.2" max="0.95" step="0.01" value="0.5" />
+              </label>
+            </div>
+            <p class="note" style="margin-top: 0.7rem">
+              Keep this lightweight for static hosting. If you later need heavier simulations, we can add
+              client-side WASM or optional API-backed compute.
+            </p>
+          </article>
+        </section>
+      </main>
+
+      <p class="footer">prototype for future research communication posts</p>
+    </div>
+    <script is:inline src="/assets/js/site.js" defer></script>
+    <script is:inline>
+      (() => {
+        const canvas = document.getElementById("spikeCanvas");
+        const ctx = canvas.getContext("2d");
+        const baselineInput = document.getElementById("baseline");
+        const noiseInput = document.getElementById("noise");
+        const thresholdInput = document.getElementById("threshold");
+        const summary = document.getElementById("summary");
+
+        const pxRatio = Math.max(1, window.devicePixelRatio || 1);
+        const cssWidth = canvas.clientWidth;
+        const cssHeight = canvas.clientHeight;
+        canvas.width = Math.floor(cssWidth * pxRatio);
+        canvas.height = Math.floor(cssHeight * pxRatio);
+        ctx.scale(pxRatio, pxRatio);
+
+        const traces = 16;
+        const points = 220;
+        const data = Array.from({ length: traces }, () => Array(points).fill(0));
+        const spikes = [];
+
+        const rand = () => Math.random();
+        const jitter = () => rand() * 2 - 1;
+
+        function step() {
+          const baseline = Number(baselineInput.value);
+          const noise = Number(noiseInput.value);
+          const threshold = Number(thresholdInput.value);
+
+          let spikeCount = 0;
+          for (let row = 0; row < traces; row += 1) {
+            const prev = data[row][data[row].length - 1];
+            const drift = baseline * 0.08 + prev * 0.88;
+            const value = Math.max(0, Math.min(1, drift + jitter() * noise * 0.12));
+            data[row].push(value);
+            data[row].shift();
+
+            if (value > threshold) {
+              spikeCount += 1;
+              spikes.push({ row, t: 0 });
+            }
+          }
+
+          for (const item of spikes) {
+            item.t += 1;
+          }
+
+          while (spikes.length && spikes[0].t > points) {
+            spikes.shift();
+          }
+
+          render(threshold, spikeCount);
+        }
+
+        function render(threshold, spikeCount) {
+          ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+          ctx.fillStyle = "#0d1613";
+          ctx.fillRect(0, 0, cssWidth, cssHeight);
+
+          const rowHeight = cssHeight / traces;
+          const stepX = cssWidth / (points - 1);
+
+          for (let row = 0; row < traces; row += 1) {
+            const baselineY = rowHeight * row + rowHeight * 0.5;
+            ctx.strokeStyle = "rgba(96, 188, 168, 0.19)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, baselineY);
+            ctx.lineTo(cssWidth, baselineY);
+            ctx.stroke();
+
+            ctx.strokeStyle = "rgba(255, 193, 133, 0.78)";
+            ctx.beginPath();
+            for (let i = 0; i < points; i += 1) {
+              const x = i * stepX;
+              const y = baselineY - data[row][i] * rowHeight * 0.46;
+              if (i === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+          }
+
+          for (const spike of spikes) {
+            const x = cssWidth - spike.t * stepX;
+            if (x < 0) continue;
+            const y = rowHeight * spike.row + rowHeight * 0.2;
+            ctx.fillStyle = "rgba(250, 112, 64, 0.95)";
+            ctx.fillRect(x - 1.2, y, 2.4, rowHeight * 0.62);
+          }
+
+          summary.textContent = `Mean spikes/sec: ${(
+            (spikeCount * 20) /
+            traces
+          ).toFixed(1)} | Current threshold: ${threshold.toFixed(2)}`;
+        }
+
+        setInterval(step, 50);
+      })();
+    </script>
+  </body>
+</html>

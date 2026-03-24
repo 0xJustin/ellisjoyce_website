@@ -1,0 +1,240 @@
+---
+import { getHomePageContent } from "../data/storyblokContent";
+
+const home = await getHomePageContent();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{home.metaTitle}</title>
+    <meta name="description" content={home.metaDescription} />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="preload" href="/assets/css/site.css" as="style" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+    <style>
+      /* Critical fallback so homepage remains correctly scaled even if external CSS fails to load. */
+      body.home-shell {
+        margin: 0;
+        background: #f4f1e9;
+        color: #111;
+        font-family: "Cormorant Garamond", serif;
+      }
+
+      .home-page-wrap {
+        width: min(1500px, calc(100vw - 4vw));
+        margin: 0 auto;
+        padding-bottom: 2rem;
+      }
+
+      .home-nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.4rem;
+        background: #fff;
+        padding: 0.8rem 2vw 1rem;
+      }
+
+      .wordmark-link {
+        display: inline-flex;
+        width: clamp(132px, 12vw, 170px);
+      }
+
+      .wordmark-logo {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .home-nav-links {
+        display: flex;
+        gap: clamp(0.8rem, 2vw, 2.4rem);
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .home-nav-link {
+        color: #111;
+        text-decoration: none;
+        font-size: clamp(1.1rem, 2vw, 1.5rem);
+      }
+
+      .home-nav-link.is-active {
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+      }
+
+      .home-profile-grid {
+        margin-top: 0.7rem;
+        display: grid;
+        gap: 0.7rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .home-profile-card {
+        position: relative;
+        display: block;
+        min-height: clamp(330px, 40vw, 620px);
+        overflow: hidden;
+      }
+
+      .home-profile-card img,
+      .home-photo-link img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .home-profile-copy {
+        position: absolute;
+        top: 0.8rem;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+      }
+
+      .home-profile-copy p {
+        margin: 0;
+        font-family: "Great Vibes", cursive;
+        font-size: clamp(2rem, 3.8vw, 3.8rem);
+        line-height: 0.95;
+      }
+
+      .home-profile-copy h2 {
+        margin: 0.12rem 0 0;
+        font-size: clamp(1.2rem, 2vw, 1.8rem);
+        font-weight: 500;
+      }
+
+      .home-photo-callout {
+        margin-top: 0.1rem;
+      }
+
+      .home-photo-link {
+        position: relative;
+        display: block;
+        min-height: clamp(260px, 35vw, 520px);
+        overflow: hidden;
+      }
+
+      .home-photo-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(to bottom, rgba(8, 11, 10, 0.08), rgba(8, 11, 10, 0.42));
+      }
+
+      .home-photo-overlay h2 {
+        margin: 0;
+        color: #fff;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+      }
+
+      .home-contact {
+        margin-top: 1.4rem;
+        text-align: center;
+      }
+
+      .home-contact h4 {
+        margin: 0;
+        font-size: clamp(1.6rem, 2.5vw, 2.5rem);
+        font-weight: 500;
+        line-height: 1.22;
+      }
+
+      .home-contact span {
+        color: hsl(266.91, 100%, 52%);
+        font-size: clamp(1.1rem, 2vw, 1.55rem);
+      }
+
+      .home-contact a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      @media (max-width: 900px) {
+        .home-profile-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body class="home-shell">
+    <div class="home-page-wrap">
+      <header class="site-nav home-nav">
+        <a class="wordmark-link" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src={home.logoImage}
+            alt={home.logoAlt}
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="home-nav-links" aria-label="Primary navigation">
+          {
+            home.navLinks.map((link) => (
+              <a
+                class={`home-nav-link${link.active ? " is-active" : ""}`}
+                href={link.href}
+                aria-current={link.active ? "page" : undefined}
+              >
+                {link.label}
+              </a>
+            ))
+          }
+        </nav>
+      </header>
+
+      <main class="home-main">
+        <section class="home-profile-grid">
+          {
+            home.profiles.map((profile) => (
+              <a class={`home-profile-card home-profile-card--${profile.cssClass}`} href={profile.href}>
+                <img src={profile.image} alt={profile.alt} loading="lazy" decoding="async" />
+                <div class={`home-profile-copy home-profile-copy--${profile.cssClass}`}>
+                  <p>{profile.name}</p>
+                  <h2>{profile.subtitle}</h2>
+                </div>
+              </a>
+            ))
+          }
+        </section>
+
+        <section class="home-photo-callout">
+          <a class="home-photo-link" href={home.photoHref}>
+            <img src={home.photoImage} alt={home.photoAlt} loading="lazy" decoding="async" />
+            <div class="home-photo-overlay">
+              <h2>{home.photoTitle}</h2>
+            </div>
+          </a>
+        </section>
+      </main>
+
+      <footer class="home-contact">
+        <h4>
+          {home.contactHeading}
+          <br />
+          <span>
+            {
+              home.contactLines.map((line, index) => (
+                <>
+                  {line.href ? <a href={line.href}>{line.label}</a> : line.label}
+                  {index < home.contactLines.length - 1 && <br />}
+                </>
+              ))
+            }
+          </span>
+        </h4>
+      </footer>
+    </div>
+    <script is:inline src="/assets/js/site.js" defer></script>
+  </body>
+</html>

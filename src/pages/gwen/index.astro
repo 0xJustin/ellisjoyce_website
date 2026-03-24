@@ -1,0 +1,76 @@
+---
+const socialLinks = [
+  {
+    label: "Email",
+    href: "mailto:gqjellis27@gmail.com",
+  },
+  {
+    label: "Blog",
+    href: "/blog",
+  },
+  {
+    label: "Photography",
+    href: "/photography",
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gwendolyn Ellis-Joyce | Profile</title>
+    <meta name="description" content="Professional profile and writing home for Gwendolyn Ellis-Joyce." />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body class="profile-shell">
+    <div class="page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/justin">Justin CV</a>
+          <a class="nav-link" href="/blog">Blog</a>
+          <a class="nav-link" href="/photography">Photography</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="profile-minimal" data-reveal>
+          <p class="eyebrow">Gwendolyn Ellis-Joyce</p>
+          <h1>Professional Profile</h1>
+          <p>
+            A concise home for CV updates, writing, and collaborations.
+          </p>
+
+          <div class="profile-link-row" aria-label="Profile links">
+            {
+              socialLinks.map((link) => (
+                <a class="profile-link-pill" href={link.href}>{link.label}</a>
+              ))
+            }
+          </div>
+
+          <div class="profile-actions">
+            <a class="profile-action-link" href="mailto:gqjellis27@gmail.com">Contact</a>
+            <span aria-hidden="true">/</span>
+            <a class="profile-action-link" href="/blog">Read Posts</a>
+          </div>
+        </section>
+      </main>
+
+      <p class="footer">last updated February 2026</p>
+    </div>
+    <script is:inline src="/assets/js/site.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Bird Map seen filter preview</title>
+  <desc id="desc">Snapshot-style preview of the Bird Map with the Seen filter selected.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d5dfda"/>
+      <stop offset="100%" stop-color="#c7d7d1"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="11" flood-color="#122922" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect x="54" y="48" width="1492" height="804" rx="24" fill="#eef4f1" stroke="#8fa29a" stroke-opacity="0.42" stroke-width="2" filter="url(#shadow)"/>
+
+  <g font-family="'IBM Plex Mono', monospace" font-size="27" font-weight="600" letter-spacing="2">
+    <rect x="96" y="90" width="90" height="48" rx="24" fill="#e8efec" stroke="#80958d" stroke-width="2"/>
+    <text x="141" y="122" text-anchor="middle" fill="#2a453d">ALL</text>
+
+    <rect x="198" y="90" width="104" height="48" rx="24" fill="#dbc79a" stroke="#8a7440" stroke-width="2"/>
+    <text x="250" y="122" text-anchor="middle" fill="#5c4415">SEEN</text>
+
+    <rect x="316" y="90" width="154" height="48" rx="24" fill="#f8fbfa" stroke="#a5b6af" stroke-width="2"/>
+    <text x="393" y="122" text-anchor="middle" fill="#35524a">NOT SEEN</text>
+
+    <rect x="484" y="90" width="228" height="48" rx="24" fill="#f8fbfa" stroke="#a5b6af" stroke-width="2"/>
+    <text x="598" y="122" text-anchor="middle" fill="#35524a">PHOTOGRAPHED</text>
+  </g>
+
+  <rect x="82" y="168" width="1436" height="630" rx="18" fill="#d4dfdb" stroke="#98aba3" stroke-width="2"/>
+
+  <rect x="118" y="220" width="50" height="178" rx="8" fill="#edf3f0" stroke="#93a69f" stroke-width="2"/>
+  <rect x="128" y="232" width="30" height="40" rx="6" fill="#f5f9f7" stroke="#8a9f97"/>
+  <rect x="128" y="276" width="30" height="40" rx="6" fill="#f5f9f7" stroke="#8a9f97"/>
+  <rect x="128" y="320" width="30" height="40" rx="6" fill="#f5f9f7" stroke="#8a9f97"/>
+  <text x="143" y="260" text-anchor="middle" fill="#3f5f55" font-size="36" font-family="Georgia, serif">+</text>
+  <text x="143" y="302" text-anchor="middle" fill="#3f5f55" font-size="42" font-family="Georgia, serif">-</text>
+  <text x="143" y="347" text-anchor="middle" fill="#3f5f55" font-size="30" font-family="Georgia, serif">▲</text>
+
+  <g fill="#f6f8f7" stroke="#98aba3" stroke-width="2">
+    <rect x="208" y="248" width="110" height="84" rx="3"/>
+    <rect x="320" y="248" width="116" height="84" rx="3"/>
+    <rect x="438" y="248" width="120" height="84" rx="3"/>
+    <rect x="560" y="248" width="116" height="84" rx="3"/>
+    <rect x="678" y="248" width="108" height="84" rx="3"/>
+
+    <rect x="208" y="334" width="134" height="90" rx="3"/>
+    <rect x="344" y="334" width="132" height="90" rx="3"/>
+    <rect x="478" y="334" width="132" height="90" rx="3"/>
+    <rect x="612" y="334" width="128" height="90" rx="3"/>
+    <rect x="742" y="334" width="120" height="90" rx="3"/>
+
+    <rect x="208" y="426" width="148" height="94" rx="3"/>
+    <rect x="358" y="426" width="146" height="94" rx="3"/>
+    <rect x="506" y="426" width="130" height="94" rx="3"/>
+    <rect x="638" y="426" width="122" height="94" rx="3"/>
+    <rect x="762" y="426" width="122" height="94" rx="3"/>
+
+    <rect x="256" y="522" width="176" height="106" rx="3"/>
+    <rect x="434" y="522" width="164" height="106" rx="3"/>
+    <rect x="600" y="522" width="144" height="106" rx="3"/>
+    <rect x="746" y="522" width="138" height="106" rx="3"/>
+  </g>
+
+  <g fill="#cdbf9b" stroke="#8f8160" stroke-width="2">
+    <rect x="560" y="248" width="116" height="84" rx="3"/>
+    <rect x="478" y="426" width="130" height="94" rx="3"/>
+    <rect x="256" y="522" width="176" height="106" rx="3"/>
+    <rect x="746" y="522" width="138" height="106" rx="3"/>
+  </g>
+
+  <g fill="#9b8525" stroke="#6f5f1d" stroke-width="2">
+    <rect x="742" y="334" width="120" height="90" rx="3"/>
+    <rect x="638" y="426" width="122" height="94" rx="3"/>
+    <rect x="600" y="522" width="144" height="106" rx="3"/>
+  </g>
+
+  <g fill="#becbc6" stroke="#8ca19a" stroke-width="2" opacity="0.92">
+    <path d="M874 246h150l42 41v90l-52 44h-140z"/>
+    <path d="M876 420h197l55 45v195h-252z"/>
+    <path d="M1068 300h137l48 39v130h-185z"/>
+    <path d="M1101 470h186l57 56v150h-243z"/>
+  </g>
+
+  <text x="184" y="732" fill="#21483f" font-size="70" font-family="Georgia, serif" font-weight="700">Photo Geography</text>
+  <text x="1170" y="732" fill="#35564d" font-size="34" font-family="'IBM Plex Mono', monospace" letter-spacing="2">THROUGH FEB 2026</text>
+
+  <line x1="180" y1="762" x2="1460" y2="762" stroke="#8ea49c" stroke-width="16" stroke-linecap="round"/>
+  <line x1="180" y1="762" x2="1150" y2="762" stroke="#23735f" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="1150" cy="762" r="21" fill="#23735f" stroke="#0e3b31" stroke-width="4"/>
+</svg>

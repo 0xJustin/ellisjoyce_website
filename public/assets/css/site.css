@@ -626,6 +626,78 @@ a {
   gap: 1rem;
 }
 
+.photo-featured {
+  margin-top: 0.8rem;
+}
+
+.featured-trip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 0.85rem;
+}
+
+.featured-trip-card {
+  border: 1px solid rgba(22, 41, 36, 0.2);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 96% -24%, rgba(237, 193, 116, 0.27), transparent 44%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(243, 249, 246, 0.9));
+  padding: 0.58rem;
+  box-shadow: 0 11px 20px rgba(14, 30, 26, 0.08);
+}
+
+.featured-trip-cover {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid rgba(20, 38, 33, 0.26);
+}
+
+.featured-trip-cover img {
+  width: 100%;
+  aspect-ratio: 5 / 4;
+  object-fit: cover;
+  display: block;
+}
+
+.featured-trip-overlay {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 0.56rem 0.62rem;
+  color: #fff;
+  background: linear-gradient(to top, rgba(7, 16, 13, 0.78), rgba(7, 16, 13, 0.1));
+}
+
+.featured-trip-overlay p {
+  margin: 0;
+  font: 600 0.63rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.featured-trip-overlay h3 {
+  margin: 0.14rem 0 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.55rem;
+  line-height: 1.04;
+}
+
+.featured-trip-thumbs {
+  margin-top: 0.46rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.34rem;
+}
+
+.featured-trip-thumbs img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 1px solid rgba(21, 38, 33, 0.2);
+}
+
 .trip-card {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
@@ -669,6 +741,221 @@ a {
   font-family: "Cormorant Garamond", serif;
   font-size: 1.45rem;
   line-height: 1.03;
+}
+
+.trip-rating {
+  margin: 0.52rem 0 0;
+  color: #35574c;
+  font: 600 0.64rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.top-shot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: 0.22rem;
+}
+
+.favorites-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+  gap: 0.32rem;
+}
+
+.favorites-photo-card {
+  position: relative;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background: #09100d;
+}
+
+.favorites-photo-card a {
+  display: block;
+}
+
+.favorites-photo-card img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  display: block;
+}
+
+.favorites-photo-card figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  display: grid;
+  gap: 0.06rem;
+  padding: 0.28rem 0.32rem;
+  background: linear-gradient(to top, rgba(8, 14, 11, 0.88), rgba(8, 14, 11, 0.08));
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.favorites-photo-card:hover figcaption,
+.favorites-photo-card:focus-within figcaption {
+  opacity: 1;
+}
+
+.favorites-photo-card figcaption strong {
+  color: #e6f4ef;
+  font: 600 0.62rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.favorites-photo-card figcaption span {
+  color: rgba(227, 241, 235, 0.86);
+  font: 500 0.58rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.top-shot-card {
+  position: relative;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background: #09100d;
+}
+
+.top-shot-card img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  display: block;
+}
+
+.top-shot-card figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  display: grid;
+  gap: 0.06rem;
+  padding: 0.26rem 0.3rem;
+  background: linear-gradient(to top, rgba(8, 14, 11, 0.88), rgba(8, 14, 11, 0.08));
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.top-shot-card:hover figcaption,
+.top-shot-card:focus-within figcaption {
+  opacity: 1;
+}
+
+.top-shot-card figcaption strong {
+  color: #e4f3ed;
+  font: 600 0.52rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.top-shot-card figcaption span {
+  color: rgba(227, 241, 235, 0.86);
+  font: 500 0.54rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.trip-stream-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0.9rem;
+}
+
+.trip-stream-card {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.trip-stream-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.trip-stream-head h3 {
+  margin: 0.1rem 0 0;
+  color: #14372d;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.5rem;
+  line-height: 1.03;
+}
+
+.trip-stream-grid {
+  margin-top: 0.3rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+  gap: 0.28rem;
+}
+
+.trip-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+  gap: 0.3rem;
+}
+
+.trip-photo-card {
+  position: relative;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background: #09100d;
+}
+
+.trip-photo-card > a {
+  display: block;
+}
+
+.trip-photo-card img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  display: block;
+}
+
+.trip-photo-card figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  display: grid;
+  gap: 0.06rem;
+  padding: 0.23rem 0.3rem;
+  background: linear-gradient(to top, rgba(8, 14, 11, 0.9), rgba(8, 14, 11, 0.06));
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.trip-photo-card:hover figcaption,
+.trip-photo-card:focus-within figcaption {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .favorites-photo-card figcaption,
+  .top-shot-card figcaption,
+  .trip-photo-card figcaption {
+    opacity: 1;
+  }
+}
+
+.trip-photo-card figcaption strong {
+  color: #e6f4ef;
+  font: 600 0.58rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.trip-photo-card figcaption span {
+  color: rgba(227, 241, 235, 0.86);
+  font: 500 0.56rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .trip-location {
@@ -715,6 +1002,37 @@ a {
   text-decoration: underline;
 }
 
+.photography-intro-actions {
+  margin-top: 0.72rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.trip-carousel-shell {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.trip-carousel-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(380px, 420px);
+  gap: 0.85rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.35rem;
+}
+
+.trip-carousel-track .trip-card {
+  scroll-snap-align: start;
+}
+
+.trip-carousel-track .trip-cover img {
+  aspect-ratio: 4 / 3;
+}
+
 .bird-atlas-callout {
   margin-top: 0.9rem;
 }
@@ -726,6 +1044,15 @@ a {
     radial-gradient(circle at 98% -16%, rgba(240, 198, 129, 0.28), transparent 40%),
     linear-gradient(138deg, rgba(255, 255, 255, 0.97), rgba(243, 250, 247, 0.89));
   padding: 0.95rem;
+  display: grid;
+  gap: 0.95rem;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 500px);
+  align-items: center;
+}
+
+.bird-atlas-card-copy {
+  display: grid;
+  gap: 0.16rem;
 }
 
 .bird-atlas-card h2 {
@@ -745,6 +1072,184 @@ a {
   margin-top: 0.62rem;
 }
 
+.bird-atlas-preview-link {
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(22, 46, 39, 0.28);
+  box-shadow: 0 14px 22px rgba(18, 35, 30, 0.14);
+  background: #d9e4de;
+}
+
+.bird-atlas-preview-link img {
+  width: 100%;
+  aspect-ratio: 14 / 9;
+  object-fit: cover;
+  display: block;
+}
+
+.bird-atlas-preview-link:hover,
+.bird-atlas-preview-link:focus-visible {
+  outline: 2px solid rgba(25, 66, 57, 0.44);
+  outline-offset: 2px;
+}
+
+.photo-lightbox-open {
+  overflow: hidden;
+}
+
+@media (max-width: 860px) {
+  .bird-atlas-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.photo-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: clamp(0.6rem, 2vw, 1.2rem);
+}
+
+.photo-lightbox[hidden] {
+  display: none;
+}
+
+.photo-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 14, 12, 0.82);
+  backdrop-filter: blur(2px);
+}
+
+.photo-lightbox-dialog {
+  position: relative;
+  width: min(1500px, 98vw);
+  max-height: 95vh;
+  overflow: auto;
+  border: 1px solid rgba(223, 233, 229, 0.34);
+  border-radius: 12px;
+  background: rgba(7, 16, 13, 0.94);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.44);
+}
+
+.photo-lightbox-close {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  z-index: 2;
+  appearance: none;
+  border: 1px solid rgba(228, 241, 236, 0.46);
+  border-radius: 999px;
+  padding: 0.25rem 0.5rem;
+  background: rgba(15, 37, 31, 0.65);
+  color: #edf7f3;
+  font: 500 0.62rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.photo-lightbox-figure {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  min-height: min(86vh, 980px);
+}
+
+.photo-lightbox-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #030706;
+}
+
+.photo-lightbox-caption {
+  margin: 0;
+  padding: 0.95rem 0.9rem 1rem;
+  border-left: 1px solid rgba(225, 238, 233, 0.18);
+  display: grid;
+  align-content: start;
+  gap: 0.38rem;
+  color: #d9ebe4;
+}
+
+.photo-lightbox-title {
+  margin: 0;
+  color: #f4fbf8;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.55rem;
+  line-height: 1.06;
+}
+
+.photo-lightbox-meta,
+.photo-lightbox-rating {
+  margin: 0;
+  color: #bdd3cb;
+  font: 500 0.66rem/1.34 "IBM Plex Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.photo-lightbox-exif {
+  margin: 0.12rem 0 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 0.48rem;
+}
+
+.photo-lightbox-exif dt {
+  margin: 0;
+  color: #9fc0b4;
+  font: 600 0.62rem/1.25 "IBM Plex Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.photo-lightbox-exif dd {
+  margin: 0;
+  color: #edf7f3;
+  font: 500 0.72rem/1.3 "IBM Plex Mono", monospace;
+}
+
+.photo-lightbox-exif-empty {
+  color: #9db8b0;
+  font: 500 0.66rem/1.3 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.photo-lightbox-fullres {
+  margin-top: 0.3rem;
+  color: #bce8d7;
+  text-decoration: underline;
+  font: 500 0.68rem/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 980px) {
+  .trip-carousel-track {
+    grid-auto-columns: minmax(320px, 86vw);
+  }
+
+  .photo-lightbox-figure {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .photo-lightbox-image {
+    max-height: 68vh;
+  }
+
+  .photo-lightbox-caption {
+    border-left: 0;
+    border-top: 1px solid rgba(225, 238, 233, 0.18);
+  }
+}
+
 .bird-page-wrap {
   width: min(1320px, calc(100vw - 2.2rem));
 }
@@ -757,6 +1262,8 @@ a {
 .bird-hero {
   position: relative;
   overflow: hidden;
+  display: grid;
+  place-items: center;
   padding: clamp(1.3rem, 3vw, 2.35rem);
   border: 1px solid rgba(20, 31, 28, 0.22);
   border-radius: 16px;
@@ -790,11 +1297,12 @@ a {
 }
 
 .bird-hero h1 {
-  margin: 0.3rem 0 0;
+  margin: 0;
   font-family: "Cormorant Garamond", serif;
   font-size: clamp(2.2rem, 6vw, 4.2rem);
   line-height: 0.95;
   letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .bird-hero > p {
@@ -839,6 +1347,34 @@ a {
   display: grid;
   gap: 0.65rem;
   grid-template-columns: minmax(245px, 360px) minmax(260px, 1fr);
+}
+
+.bird-view-toggle {
+  display: inline-flex;
+  border-radius: 999px;
+  border: 1px solid rgba(23, 47, 41, 0.28);
+  padding: 0.2rem;
+  background: rgba(14, 33, 28, 0.08);
+  gap: 0.12rem;
+}
+
+.bird-view-button {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #26483f;
+  cursor: pointer;
+  font: 500 0.7rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.42rem 0.6rem;
+}
+
+.bird-view-button.is-active {
+  background: linear-gradient(112deg, #194a40, #2c7667);
+  color: #f3f9f7;
+  box-shadow: inset 0 0 0 1px rgba(246, 255, 253, 0.14);
 }
 
 .bird-mode-toggle {
@@ -924,6 +1460,27 @@ a {
   color: #163931;
 }
 
+.bird-filter-button.is-active[data-bird-filter="seen"],
+.bird-filter-button.is-active[data-admin-filter="seen"] {
+  border-color: rgba(112, 86, 24, 0.62);
+  background: rgba(160, 126, 30, 0.22);
+  color: #5c430f;
+}
+
+.bird-filter-button.is-active[data-bird-filter="photographed"],
+.bird-filter-button.is-active[data-admin-filter="photographed"] {
+  border-color: rgba(145, 40, 48, 0.62);
+  background: rgba(198, 63, 74, 0.18);
+  color: #6d171e;
+}
+
+.bird-filter-button.is-active[data-bird-filter="needs-photo"],
+.bird-filter-button.is-active[data-admin-filter="needs-photo"] {
+  border-color: rgba(162, 90, 30, 0.62);
+  background: rgba(205, 122, 47, 0.22);
+  color: #71411a;
+}
+
 .bird-manual-note {
   margin: 0.62rem 0 0;
   color: #40524b;
@@ -938,10 +1495,268 @@ a {
   padding: 0.08rem 0.22rem;
 }
 
+.bird-layout {
+  display: grid;
+  gap: 0.85rem;
+  align-items: start;
+}
+
+.bird-layout-left {
+  display: grid;
+  gap: 0.62rem;
+  min-width: 0;
+}
+
+.bird-layout-right {
+  min-width: 0;
+}
+
 .bird-stats {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.6rem;
+}
+
+.bird-map-panel {
+  border: 1px solid rgba(22, 42, 36, 0.2);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 100% -20%, rgba(235, 194, 126, 0.2), transparent 40%),
+    linear-gradient(146deg, rgba(255, 255, 255, 0.98), rgba(245, 251, 248, 0.91));
+  padding: 0.78rem;
+  box-shadow: 0 14px 26px rgba(17, 34, 30, 0.07);
+}
+
+.bird-map-head h2 {
+  margin: 0;
+  color: #15342b;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1.7rem, 2.7vw, 2.25rem);
+  line-height: 1;
+}
+
+.bird-map-head p {
+  margin: 0.32rem 0 0;
+  color: #445950;
+  max-width: 70ch;
+  font-size: 0.93rem;
+}
+
+.bird-map-canvas {
+  margin-top: 0.62rem;
+  width: 100%;
+  height: min(56vh, 620px);
+  border: 1px solid rgba(26, 44, 39, 0.22);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #e6eeea;
+}
+
+.bird-map-canvas .leaflet-control-zoom {
+  border: 1px solid rgba(22, 40, 34, 0.25);
+  box-shadow: 0 8px 15px rgba(21, 35, 31, 0.16);
+}
+
+.bird-map-canvas .leaflet-control-zoom a {
+  color: #1f3f36;
+}
+
+.bird-map-canvas .leaflet-interactive:focus {
+  outline: none;
+}
+
+.bird-map-canvas .maplibregl-ctrl-group {
+  border: 1px solid rgba(22, 40, 34, 0.25);
+  box-shadow: 0 8px 15px rgba(21, 35, 31, 0.16);
+}
+
+.bird-map-canvas .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  opacity: 0.9;
+}
+
+.bird-map-status {
+  margin: 0.45rem 0 0;
+  color: #425b53;
+  font: 500 0.66rem/1.32 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bird-map-scale {
+  margin-top: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #48635b;
+  font: 500 0.61rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bird-map-scale > span {
+  min-width: 2.6rem;
+  text-align: center;
+}
+
+.bird-map-scale-bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(20, 44, 38, 0.25);
+  background: linear-gradient(90deg, #ffffff 0%, #c63f4a 100%);
+}
+
+.bird-map-scale-meta {
+  margin: 0.24rem 0 0;
+  color: #4a655c;
+  font: 500 0.58rem/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bird-map-time {
+  margin-top: 0.45rem;
+  border: 1px solid rgba(22, 42, 36, 0.18);
+  border-radius: 9px;
+  padding: 0.5rem 0.55rem;
+  background: rgba(247, 252, 250, 0.86);
+}
+
+.bird-map-time-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
+}
+
+.bird-map-time-head label,
+.bird-map-time-head span {
+  margin: 0;
+  color: #3d5950;
+  font: 600 0.62rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bird-map-time input[type="range"] {
+  width: 100%;
+  margin: 0;
+  accent-color: #1f6254;
+}
+
+.bird-map-status code {
+  border-radius: 3px;
+  background: rgba(22, 57, 48, 0.09);
+  padding: 0.08rem 0.2rem;
+}
+
+.bird-map-insights {
+  margin-top: 0.5rem;
+  border: 1px solid rgba(22, 42, 36, 0.18);
+  border-radius: 10px;
+  background: rgba(249, 252, 251, 0.9);
+  padding: 0.58rem;
+  display: grid;
+  gap: 0.48rem;
+}
+
+.bird-map-insights-head h3 {
+  margin: 0;
+  color: #16372e;
+  font: 600 0.95rem/1.2 "Space Grotesk", sans-serif;
+}
+
+.bird-map-insights-head p {
+  margin: 0.2rem 0 0;
+  color: #45645a;
+  font: 500 0.62rem/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.bird-map-insights-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.bird-map-insights-metrics article {
+  border: 1px solid rgba(22, 42, 36, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.38rem 0.45rem;
+}
+
+.bird-map-insights-metrics p {
+  margin: 0;
+  color: #436158;
+  font: 600 0.55rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bird-map-insights-metrics strong {
+  display: block;
+  margin-top: 0.16rem;
+  color: #102b23;
+  font: 700 1.18rem/1.05 "Space Grotesk", sans-serif;
+}
+
+.bird-map-insights-rank {
+  margin: 0;
+  color: #37554d;
+  font: 600 0.57rem/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bird-map-insights-missing p {
+  margin: 0;
+  color: #3f5d54;
+  font: 600 0.56rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bird-map-insights-missing ul {
+  margin: 0.25rem 0 0;
+  padding: 0 0 0 1rem;
+  color: #1a3e34;
+  font: 500 0.72rem/1.35 "Space Grotesk", sans-serif;
+}
+
+.bird-map-insights-missing li + li {
+  margin-top: 0.14rem;
+}
+
+.maplibregl-popup.bird-map-tooltip .maplibregl-popup-content {
+  border-radius: 8px;
+  border: 1px solid rgba(20, 53, 45, 0.22);
+  background: rgba(247, 252, 250, 0.96);
+  box-shadow: 0 12px 22px rgba(19, 36, 32, 0.2);
+  padding: 0.34rem 0.46rem;
+}
+
+.maplibregl-popup.bird-map-tooltip .maplibregl-popup-tip {
+  border-top-color: rgba(247, 252, 250, 0.96);
+}
+
+.bird-map-tooltip-body {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.bird-map-tooltip-body strong {
+  color: #173930;
+  font: 600 0.72rem/1.2 "Space Grotesk", sans-serif;
+}
+
+.bird-map-tooltip-body span {
+  color: #3f5f56;
+  font: 600 0.56rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .bird-stat-card {
@@ -1033,6 +1848,14 @@ a {
   gap: 0.45rem;
 }
 
+.bird-family.is-filter-empty {
+  opacity: 0.66;
+}
+
+.bird-family.is-filter-empty .bird-species-grid {
+  display: none;
+}
+
 .bird-family > header {
   display: flex;
   align-items: baseline;
@@ -1076,10 +1899,31 @@ a {
   box-shadow: 0 10px 20px rgba(20, 35, 31, 0.06);
 }
 
+.bird-species-top {
+  display: grid;
+  gap: 0.24rem;
+}
+
+.bird-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.bird-species.has-photo {
+  border-color: rgba(145, 40, 48, 0.34);
+}
+
+.bird-species.is-seen-no-photo {
+  border-color: rgba(164, 95, 32, 0.36);
+}
+
 .bird-species[hidden] {
   display: none;
 }
 
+.bird-rarity-chip,
 .bird-code-chip {
   display: inline-flex;
   align-items: center;
@@ -1094,12 +1938,31 @@ a {
   padding: 0.23rem 0.38rem;
 }
 
+.bird-rarity-chip {
+  border-color: rgba(120, 49, 17, 0.34);
+  background: rgba(179, 90, 40, 0.2);
+  color: #6f2f14;
+}
+
 .bird-species h3 {
-  margin: 0.24rem 0 0;
+  margin: 0;
   font-family: "Cormorant Garamond", serif;
   color: #122f26;
-  font-size: clamp(1.2rem, 2vw, 1.5rem);
-  line-height: 1.03;
+  font-size: clamp(1.05rem, 1.4vw, 1.28rem);
+  line-height: 1.07;
+}
+
+.bird-title-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.38rem;
+}
+
+.bird-scientific-inline {
+  color: #4c665e;
+  font-size: 0.79em;
+  font-weight: 500;
 }
 
 .bird-scientific-name {
@@ -1120,6 +1983,7 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
+  align-items: center;
 }
 
 .bird-state-chip {
@@ -1127,8 +1991,8 @@ a {
   align-items: center;
   border-radius: 999px;
   border: 1px solid transparent;
-  padding: 0.2rem 0.42rem;
-  font: 500 0.63rem/1.2 "IBM Plex Mono", monospace;
+  padding: 0.18rem 0.38rem;
+  font: 500 0.56rem/1.2 "IBM Plex Mono", monospace;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -1139,25 +2003,121 @@ a {
   color: #1b493d;
 }
 
+.bird-state-chip--seen.is-on {
+  border-color: rgba(112, 85, 23, 0.38);
+  background: rgba(164, 128, 30, 0.2);
+  color: #5e4312;
+}
+
+.bird-state-chip--seen.is-on.is-seen-without-photo {
+  border-color: rgba(160, 90, 28, 0.38);
+  background: rgba(204, 123, 48, 0.23);
+  color: #6d3f16;
+}
+
+.bird-state-chip--photo.is-on {
+  border-color: rgba(145, 40, 48, 0.38);
+  background: rgba(198, 63, 74, 0.2);
+  color: #6f1a21;
+}
+
 .bird-state-chip.is-off {
   border-color: rgba(68, 80, 76, 0.24);
   background: rgba(130, 145, 140, 0.14);
   color: #42534d;
 }
 
+.bird-rating-chip {
+  font-size: 0.64rem;
+  letter-spacing: 0.02em;
+}
+
+.bird-rating-chip.is-on {
+  border-color: rgba(120, 76, 22, 0.3);
+  background: rgba(201, 152, 79, 0.18);
+  color: #6e4916;
+}
+
 .bird-photo-preview {
   margin: 0;
+  position: relative;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid rgba(19, 38, 33, 0.16);
   background: rgba(253, 255, 254, 0.96);
 }
 
+.bird-photo-preview[hidden] {
+  display: none !important;
+}
+
 .bird-photo-preview img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
   display: block;
+}
+
+.bird-photo-rating-tag {
+  position: absolute;
+  top: 0.34rem;
+  right: 0.34rem;
+  z-index: 2;
+  pointer-events: none;
+  border: 1px solid rgba(23, 47, 41, 0.38);
+  border-radius: 999px;
+  background: rgba(247, 252, 250, 0.9);
+  color: #1f4a3e;
+  padding: 0.13rem 0.35rem;
+  font: 700 0.62rem/1.15 "IBM Plex Mono", monospace;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 11px rgba(16, 30, 26, 0.2);
+}
+
+.bird-photo-preview-arrow {
+  appearance: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 1.7rem;
+  height: 1.7rem;
+  border: 1px solid rgba(23, 47, 41, 0.38);
+  border-radius: 999px;
+  background: rgba(247, 252, 250, 0.9);
+  color: #1d493d;
+  cursor: pointer;
+  font: 700 1rem/1 "IBM Plex Mono", monospace;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 11px rgba(16, 30, 26, 0.2);
+}
+
+.bird-photo-preview-arrow:hover {
+  background: rgba(238, 247, 243, 0.98);
+}
+
+.bird-photo-preview-arrow:focus-visible {
+  outline: 2px solid rgba(34, 92, 78, 0.58);
+  outline-offset: 1px;
+}
+
+.bird-photo-preview-arrow--prev {
+  left: 0.34rem;
+}
+
+.bird-photo-preview-arrow--next {
+  right: 0.34rem;
+}
+
+.bird-photo-preview-arrow[hidden] {
+  display: none !important;
+}
+
+.bird-photo-rating-tag:empty,
+.bird-photo-rating-tag[hidden] {
+  display: none;
 }
 
 .bird-photo-preview figcaption {
@@ -1172,9 +2132,13 @@ a {
 .bird-photo-preview.is-empty {
   display: grid;
   align-content: center;
-  min-height: 78px;
+  min-height: 62px;
   padding: 0.42rem;
   border-style: dashed;
+}
+
+.bird-photo-preview.is-empty[hidden] {
+  display: none !important;
 }
 
 .bird-photo-preview.is-empty p {
@@ -1191,6 +2155,828 @@ a {
   padding-left: 0.45rem;
   color: #3f5650;
   font-size: 0.86rem;
+}
+
+.bird-seen-date {
+  margin: 0;
+  color: #47635a;
+  font: 500 0.62rem/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bird-manual-note a {
+  margin-left: 0.45rem;
+  color: #18463b;
+  text-decoration: underline;
+}
+
+.bird-admin-hero code {
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.14);
+  padding: 0.08rem 0.28rem;
+}
+
+.bird-admin-toolbar .bird-controls-top {
+  grid-template-columns: minmax(245px, 360px) minmax(260px, 1fr);
+}
+
+.photo-admin-toolbar .bird-controls-top {
+  grid-template-columns: minmax(240px, 1.4fr) minmax(170px, 0.8fr) minmax(160px, 0.7fr);
+}
+
+.bird-admin-actions {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.bird-admin-actions .btn {
+  white-space: nowrap;
+}
+
+.bird-admin-layout {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.bird-admin-list-panel,
+.bird-admin-editor-panel {
+  border: 1px solid rgba(19, 36, 31, 0.2);
+  border-radius: 12px;
+  background:
+    linear-gradient(148deg, rgba(255, 255, 255, 0.97), rgba(244, 250, 248, 0.9));
+  box-shadow: 0 14px 28px rgba(16, 31, 27, 0.08);
+}
+
+.bird-admin-list-panel {
+  position: sticky;
+  top: 0.8rem;
+  max-height: calc(100vh - 1.2rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.bird-admin-list-panel > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.7rem 0.78rem 0.56rem;
+  border-bottom: 1px solid rgba(23, 43, 37, 0.15);
+}
+
+.bird-admin-list-panel > header h2 {
+  margin: 0;
+  color: #15352c;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.bird-admin-list-panel > header p {
+  margin: 0;
+  color: #455d55;
+  font: 500 0.68rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bird-admin-list {
+  overflow: auto;
+  padding: 0.45rem;
+  display: grid;
+  gap: 0.42rem;
+}
+
+.bird-admin-item {
+  appearance: none;
+  border: 1px solid rgba(21, 43, 37, 0.2);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.86);
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 0.18rem;
+  text-align: left;
+  padding: 0.45rem 0.52rem;
+}
+
+.bird-admin-item.is-selected {
+  border-color: rgba(24, 74, 62, 0.66);
+  background: rgba(34, 97, 82, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.bird-admin-item-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.2rem;
+  line-height: 1.03;
+  color: #16352c;
+}
+
+.bird-admin-item-meta {
+  margin: 0;
+  color: #4c655d;
+  font-size: 0.78rem;
+}
+
+.bird-admin-item-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.24rem;
+}
+
+.bird-state-chip.is-edit {
+  border-color: rgba(123, 73, 20, 0.34);
+  background: rgba(201, 142, 68, 0.2);
+  color: #6b4314;
+}
+
+.bird-admin-editor-panel {
+  padding: 0.7rem 0.75rem;
+}
+
+.bird-admin-editor {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.bird-admin-editor > header h2 {
+  margin: 0.18rem 0 0;
+  color: #15352c;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 0.98;
+}
+
+.bird-admin-editor .bird-scientific-name {
+  margin: 0.22rem 0 0;
+}
+
+.bird-admin-editor .bird-species-id {
+  margin: 0.26rem 0 0;
+}
+
+.bird-admin-field-grid {
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.bird-admin-field-grid label,
+.bird-admin-upload-hint label,
+.bird-admin-photo-form label {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.bird-admin-field-grid span,
+.bird-admin-upload-hint span,
+.bird-admin-photo-form span,
+.bird-admin-notes-field span {
+  color: #365148;
+  font: 500 0.67rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bird-admin-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(23, 49, 41, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.58rem 0.62rem;
+}
+
+.bird-admin-checkbox input[type="checkbox"] {
+  appearance: auto;
+  accent-color: #1f5c4f;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  cursor: pointer;
+}
+
+.bird-admin-notes-field {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.bird-admin-field-grid input:not([type="checkbox"]),
+.bird-admin-field-grid select,
+.bird-admin-notes-field textarea,
+.bird-admin-upload-hint input,
+.bird-admin-photo-form input,
+.bird-admin-photo-form select {
+  appearance: none;
+  border: 1px solid rgba(21, 42, 37, 0.23);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1b2923;
+  font: 500 0.88rem/1.3 "Space Grotesk", sans-serif;
+  padding: 0.52rem 0.58rem;
+}
+
+.bird-admin-field-grid input:not([type="checkbox"]):focus-visible,
+.bird-admin-field-grid select:focus-visible,
+.bird-admin-notes-field textarea:focus-visible,
+.bird-admin-upload-hint input:focus-visible,
+.bird-admin-photo-form input:focus-visible,
+.bird-admin-photo-form select:focus-visible {
+  outline: 2px solid rgba(31, 92, 79, 0.52);
+  outline-offset: 1px;
+}
+
+.bird-admin-rating-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  border: 1px solid rgba(21, 42, 37, 0.23);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.34rem 0.46rem;
+}
+
+.bird-admin-rating-star {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgba(25, 65, 56, 0.4);
+  cursor: pointer;
+  font: 700 1.2rem/1 "Space Grotesk", sans-serif;
+  padding: 0;
+}
+
+.bird-admin-rating-star.is-on {
+  color: #1f5c4f;
+}
+
+.bird-admin-rating-star:focus-visible {
+  outline: 2px solid rgba(31, 92, 79, 0.52);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.bird-admin-photo-empty-alt {
+  color: #5b6c66;
+  font: 500 0.75rem/1.3 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bird-admin-photo-section {
+  border-top: 1px solid rgba(24, 44, 39, 0.16);
+  padding-top: 0.68rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.bird-admin-photo-section > header h3 {
+  margin: 0;
+  font-family: "Cormorant Garamond", serif;
+  color: #15352c;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.bird-admin-photo-section > header p {
+  margin: 0.24rem 0 0;
+  color: #4a605a;
+  font-size: 0.87rem;
+}
+
+.bird-admin-upload-hint {
+  border: 1px dashed rgba(24, 49, 42, 0.27);
+  border-radius: 9px;
+  background: rgba(249, 253, 252, 0.84);
+  padding: 0.52rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.bird-admin-upload-hint p {
+  margin: 0;
+  color: #415851;
+  font: 500 0.67rem/1.34 "IBM Plex Mono", monospace;
+  letter-spacing: 0.03em;
+}
+
+.bird-admin-upload-progress {
+  display: grid;
+  gap: 0.24rem;
+}
+
+.bird-admin-upload-progress progress {
+  width: 100%;
+  height: 0.62rem;
+  accent-color: #916f1f;
+}
+
+.bird-admin-upload-progress p {
+  margin: 0;
+  color: #4a615b;
+  font: 500 0.66rem/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.02em;
+}
+
+.bird-admin-upload-hint img {
+  width: min(340px, 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(20, 40, 34, 0.22);
+}
+
+.bird-admin-bulk-shell,
+.bird-admin-bulk-upload {
+  border: 1px solid rgba(24, 49, 42, 0.24);
+  border-radius: 10px;
+  background: rgba(250, 253, 251, 0.88);
+  padding: 0.54rem;
+  display: grid;
+  gap: 0.42rem;
+}
+
+.bird-admin-bulk-shell-head h2,
+.bird-admin-bulk-upload > header h4 {
+  margin: 0;
+  color: #173f35;
+  font: 600 1rem/1.2 "Space Grotesk", sans-serif;
+}
+
+.bird-admin-bulk-shell-head p,
+.bird-admin-bulk-upload > header p {
+  margin: 0.22rem 0 0;
+  color: #425b54;
+  font: 500 0.68rem/1.33 "IBM Plex Mono", monospace;
+  letter-spacing: 0.03em;
+}
+
+.bird-admin-bulk-dropzone {
+  appearance: none;
+  border: 1px dashed rgba(30, 63, 54, 0.38);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #274940;
+  cursor: pointer;
+  font: 600 0.78rem/1.25 "Space Grotesk", sans-serif;
+  letter-spacing: 0.01em;
+  padding: 0.64rem 0.72rem;
+  text-align: left;
+}
+
+.bird-admin-bulk-dropzone.is-drag-over {
+  border-color: rgba(31, 92, 79, 0.72);
+  background: rgba(242, 249, 246, 0.96);
+}
+
+.bird-admin-bulk-dropzone.is-disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.bird-admin-bulk-dropzone:focus-visible {
+  outline: 2px solid rgba(31, 92, 79, 0.52);
+  outline-offset: 1px;
+}
+
+.bird-admin-bulk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.34rem;
+}
+
+.bird-admin-bulk-queue {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.bird-admin-bulk-queue-summary {
+  margin: 0;
+  color: #4c6660;
+  font: 500 0.65rem/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bird-admin-bulk-row {
+  border: 1px solid rgba(20, 42, 36, 0.2);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.48rem;
+  display: grid;
+  gap: 0.36rem;
+}
+
+.bird-admin-bulk-row.is-invalid {
+  border-color: rgba(156, 57, 67, 0.44);
+}
+
+.bird-admin-bulk-row.is-active {
+  border-color: rgba(31, 92, 79, 0.45);
+  box-shadow: 0 0 0 1px rgba(31, 92, 79, 0.18) inset;
+}
+
+.bird-admin-bulk-row-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.bird-admin-bulk-row-head strong {
+  color: #1e4138;
+  font: 500 0.7rem/1.24 "IBM Plex Mono", monospace;
+  letter-spacing: 0.03em;
+  word-break: break-word;
+}
+
+.bird-admin-bulk-row-head p {
+  margin: 0.2rem 0 0;
+  color: #556a64;
+  font: 500 0.62rem/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.03em;
+}
+
+.bird-admin-bulk-row-actions {
+  display: flex;
+  gap: 0.24rem;
+}
+
+.bird-admin-bulk-row-actions .btn {
+  padding: 0.32rem 0.48rem;
+}
+
+.bird-admin-bulk-row-body {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: start;
+}
+
+.bird-admin-bulk-thumb {
+  margin: 0;
+  border: 1px solid rgba(20, 42, 36, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(236, 242, 239, 0.9);
+  aspect-ratio: 1;
+}
+
+.bird-admin-bulk-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bird-admin-bulk-thumb-empty {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #5f706a;
+  font: 500 0.62rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bird-admin-bulk-row-grid {
+  display: grid;
+  gap: 0.34rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.bird-admin-bulk-row-grid label {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.bird-admin-bulk-row-grid span {
+  color: #365148;
+  font: 500 0.62rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bird-admin-bulk-row-grid input,
+.bird-admin-bulk-row-grid select {
+  appearance: none;
+  border: 1px solid rgba(21, 42, 37, 0.23);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1b2923;
+  font: 500 0.82rem/1.24 "Space Grotesk", sans-serif;
+  padding: 0.48rem 0.54rem;
+}
+
+.bird-admin-bulk-row-grid input:focus-visible,
+.bird-admin-bulk-row-grid select:focus-visible {
+  outline: 2px solid rgba(31, 92, 79, 0.52);
+  outline-offset: 1px;
+}
+
+.bird-admin-bulk-row-notes {
+  grid-column: 1 / -1;
+}
+
+.bird-admin-bulk-row-meta {
+  margin: 0;
+  color: #526761;
+  font: 500 0.62rem/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bird-admin-photo-form {
+  display: grid;
+  gap: 0.42rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.bird-admin-photo-form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.bird-admin-photo-edit-preview {
+  margin: 0;
+  border: 1px solid rgba(21, 41, 36, 0.22);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.48rem;
+  display: grid;
+  gap: 0.32rem;
+}
+
+.bird-admin-photo-edit-preview img {
+  width: min(420px, 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(20, 40, 34, 0.22);
+  display: block;
+}
+
+.bird-admin-photo-edit-preview figcaption {
+  margin: 0;
+  color: #526761;
+  font: 500 0.64rem/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bird-admin-photo-list {
+  display: grid;
+  gap: 0.42rem;
+}
+
+.bird-admin-photo-card {
+  border: 1px solid rgba(21, 41, 36, 0.2);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.88);
+  padding: 0.52rem;
+}
+
+.bird-admin-photo-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.45rem;
+}
+
+.bird-admin-photo-card-head strong {
+  color: #1d3f36;
+  font: 500 0.69rem/1.24 "IBM Plex Mono", monospace;
+  letter-spacing: 0.03em;
+  word-break: break-word;
+}
+
+.bird-admin-photo-card p {
+  margin: 0.32rem 0 0;
+  color: #3f5550;
+  font-size: 0.84rem;
+}
+
+.bird-admin-photo-card-actions {
+  display: flex;
+  gap: 0.24rem;
+}
+
+.bird-admin-photo-card-actions .btn {
+  padding: 0.34rem 0.5rem;
+}
+
+.bird-admin-photo-meta {
+  color: #536a62;
+  font: 500 0.64rem/1.3 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.photo-admin-list {
+  gap: 0.36rem;
+}
+
+.photo-admin-item {
+  grid-template-columns: 74px minmax(0, 1fr);
+  align-items: start;
+  gap: 0.46rem;
+  padding: 0.38rem;
+}
+
+.photo-admin-item-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 7px;
+  border: 1px solid rgba(20, 39, 34, 0.18);
+  object-fit: cover;
+  background: rgba(233, 240, 236, 0.9);
+}
+
+.photo-admin-item-body {
+  min-width: 0;
+  display: grid;
+  gap: 0.16rem;
+}
+
+.photo-admin-item-body .bird-admin-item-title {
+  margin: 0;
+  font-size: 1.07rem;
+}
+
+.photo-admin-item-body .bird-admin-item-meta {
+  font-size: 0.72rem;
+}
+
+.photo-admin-editor {
+  gap: 0.62rem;
+}
+
+.photo-admin-preview {
+  margin: 0;
+  border: 1px solid rgba(20, 39, 34, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.photo-admin-preview img {
+  width: 100%;
+  max-height: min(52vh, 560px);
+  object-fit: contain;
+  display: block;
+  background: #edf2ef;
+}
+
+.photo-admin-upload-section {
+  margin-top: 0.2rem;
+}
+
+.photo-admin-dropzone {
+  border: 1px dashed rgba(26, 54, 46, 0.32);
+  border-radius: 10px;
+  background: rgba(246, 251, 249, 0.9);
+  padding: 0.74rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.photo-admin-dropzone p {
+  margin: 0;
+  color: #34564c;
+  font: 600 0.66rem/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.photo-admin-dropzone input[type="file"] {
+  display: none;
+}
+
+.photo-admin-dropzone.is-drag-over {
+  border-color: rgba(27, 86, 73, 0.65);
+  background: rgba(221, 237, 231, 0.92);
+}
+
+.photo-admin-dropzone.is-disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.photo-admin-upload-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.photo-admin-queue {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.photo-admin-queue-summary {
+  margin: 0;
+  color: #49635b;
+  font: 600 0.62rem/1.2 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.photo-admin-queue-item {
+  border: 1px solid rgba(24, 49, 42, 0.2);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.34rem 0.42rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.photo-admin-queue-item p {
+  margin: 0;
+  color: #34544b;
+  font: 500 0.66rem/1.25 "IBM Plex Mono", monospace;
+  letter-spacing: 0.03em;
+}
+
+.photo-admin-queue-item .btn {
+  padding: 0.28rem 0.45rem;
+}
+
+.photo-admin-trip-create {
+  margin-top: 0.2rem;
+}
+
+.photo-admin-trip-visibility {
+  margin-top: 0.2rem;
+}
+
+.photo-admin-trip-visibility-groups {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.photo-admin-trip-visibility-group {
+  display: grid;
+  gap: 0.34rem;
+}
+
+.photo-admin-trip-visibility-group h4 {
+  margin: 0;
+  color: #204339;
+  font: 600 0.73rem/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.photo-admin-trip-visibility-list {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.photo-admin-trip-visibility-item {
+  border: 1px solid rgba(24, 49, 42, 0.2);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.32rem 0.4rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.photo-admin-trip-visibility-item input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #1d5347;
+}
+
+.photo-admin-trip-visibility-item-body {
+  min-width: 0;
+  display: grid;
+  gap: 0.1rem;
+}
+
+.photo-admin-trip-visibility-item-body strong {
+  color: #184036;
+  font: 600 0.72rem/1.24 "IBM Plex Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.photo-admin-trip-visibility-item-body span {
+  color: #4a625a;
+  font: 500 0.65rem/1.24 "IBM Plex Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .note {
@@ -1536,6 +3322,29 @@ input[type="range"] {
     grid-template-columns: 360px minmax(0, 1fr);
     align-items: start;
   }
+
+  .bird-layout {
+    grid-template-columns: minmax(360px, 0.96fr) minmax(0, 1.04fr);
+  }
+
+  .bird-layout-left {
+    position: sticky;
+    top: 0.8rem;
+  }
+
+  .bird-layout-right {
+    position: sticky;
+    top: 0.8rem;
+    max-height: calc(100vh - 1.6rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    padding-right: 0.32rem;
+  }
+
+  .bird-map-canvas {
+    height: min(62vh, 700px);
+  }
 }
 
 @media (max-width: 900px) {
@@ -1545,6 +3354,42 @@ input[type="range"] {
 
   .bird-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bird-admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .bird-admin-list-panel {
+    position: static;
+    max-height: 58vh;
+  }
+
+  .bird-admin-field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bird-admin-bulk-row-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bird-admin-bulk-row-body {
+    grid-template-columns: 104px minmax(0, 1fr);
+  }
+
+  .bird-map-canvas {
+    height: min(58vh, 500px);
+  }
+
+  .bird-layout-left {
+    position: static;
+  }
+
+  .bird-layout-right {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
   }
 
   .home-profile-copy--justin {
@@ -1582,6 +3427,10 @@ input[type="range"] {
     grid-template-columns: 1fr;
   }
 
+  .bird-admin-toolbar .bird-controls-top {
+    grid-template-columns: 1fr;
+  }
+
   .bird-page-wrap {
     width: min(1320px, calc(100vw - 1.3rem));
   }
@@ -1598,6 +3447,34 @@ input[type="range"] {
 
   .bird-species-grid {
     grid-template-columns: 1fr;
+  }
+
+  .bird-admin-field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bird-admin-photo-form {
+    grid-template-columns: 1fr;
+  }
+
+  .bird-admin-bulk-row-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bird-admin-bulk-row-body {
+    grid-template-columns: 1fr;
+  }
+
+  .bird-admin-bulk-thumb {
+    max-width: 150px;
+  }
+
+  .bird-admin-photo-card-head {
+    flex-direction: column;
+  }
+
+  .bird-map-canvas {
+    height: min(54vh, 440px);
   }
 
   .profile-link-row {

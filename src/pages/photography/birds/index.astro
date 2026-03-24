@@ -1,5 +1,6 @@
 ---
 import { getBirdInventoryData, type BirdInventoryEntry } from "../../../data/birds/birdInventory";
+import { birdSeenLocationRecords } from "../../../data/birds/ebirdSeenLocations";
 
 interface BirdFamilyGroup {
   family: string;
@@ -15,21 +16,100 @@ interface BirdOrderGroup {
 const inventory = getBirdInventoryData();
 const species = inventory.species;
 const taxonomy = buildTaxonomy(species);
+const isDefaultVisibleBird = (bird: BirdInventoryEntry) => bird.rarityBand === "common";
 
-const defaultVisible = species.filter((bird) => bird.abaCode <= 3);
+const defaultVisible = species.filter((bird) => bird.rarityBand === "common");
+const defaultFiltered = defaultVisible;
 const defaultSeen = defaultVisible.filter((bird) => bird.seen).length;
 const defaultPhotographed = defaultVisible.filter((bird) => bird.hasPhoto).length;
 const defaultSeenNeedsPhoto = defaultVisible.filter((bird) => bird.seen && !bird.hasPhoto).length;
-
-const taxonomySource = [
-  `ABA v${inventory.metadata.abaVersion ?? "unknown"}`,
-  inventory.metadata.abaDate ? `(${inventory.metadata.abaDate})` : null,
-  inventory.metadata.ebirdTaxonomyVersion
-    ? `eBird/Clements taxonomy ${inventory.metadata.ebirdTaxonomyVersion}`
-    : "eBird/Clements taxonomy",
-]
-  .filter(Boolean)
-  .join(" ");
+const mapSeedPhotos = species.flatMap((bird) =>
+  bird.photos.map((photo) => ({
+    ...photo,
+    birdKey: bird.birdKey,
+    commonName: bird.commonName,
+    scientificName: bird.scientificName,
+  })),
+);
+const firstSeenDateByBirdKey = new Map(
+  species
+    .filter((bird) => bird.firstSeenDate)
+    .map((bird) => [String(bird.birdKey || "").toLowerCase(), String(bird.firstSeenDate || "")]),
+);
+const mapSeedSeenLocations = birdSeenLocationRecords.map((record) => ({
+  ...record,
+  observedOn:
+    record.observedOn ??
+    firstSeenDateByBirdKey.get(String(record.birdKey || "").toLowerCase()) ??
+    "",
+}));
+const seenLocationTokenByBird = buildSeenLocationTokenMap(birdSeenLocationRecords);
+const STATE_ABBREVIATIONS: Record<string, string> = {
+  alabama: "AL",
+  alaska: "AK",
+  arizona: "AZ",
+  arkansas: "AR",
+  california: "CA",
+  colorado: "CO",
+  connecticut: "CT",
+  delaware: "DE",
+  "district of columbia": "DC",
+  florida: "FL",
+  georgia: "GA",
+  hawaii: "HI",
+  idaho: "ID",
+  illinois: "IL",
+  indiana: "IN",
+  iowa: "IA",
+  kansas: "KS",
+  kentucky: "KY",
+  louisiana: "LA",
+  maine: "ME",
+  maryland: "MD",
+  massachusetts: "MA",
+  michigan: "MI",
+  minnesota: "MN",
+  mississippi: "MS",
+  missouri: "MO",
+  montana: "MT",
+  nebraska: "NE",
+  nevada: "NV",
+  "new hampshire": "NH",
+  "new jersey": "NJ",
+  "new mexico": "NM",
+  "new york": "NY",
+  "north carolina": "NC",
+  "north dakota": "ND",
+  ohio: "OH",
+  oklahoma: "OK",
+  oregon: "OR",
+  pennsylvania: "PA",
+  "rhode island": "RI",
+  "south carolina": "SC",
+  "south dakota": "SD",
+  tennessee: "TN",
+  texas: "TX",
+  utah: "UT",
+  vermont: "VT",
+  virginia: "VA",
+  washington: "WA",
+  "west virginia": "WV",
+  wisconsin: "WI",
+  wyoming: "WY",
+  alberta: "AB",
+  "british columbia": "BC",
+  manitoba: "MB",
+  "new brunswick": "NB",
+  "newfoundland and labrador": "NL",
+  "nova scotia": "NS",
+  ontario: "ON",
+  "prince edward island": "PE",
+  quebec: "QC",
+  saskatchewan: "SK",
+  nunavut: "NU",
+  yukon: "YT",
+  "northwest territories": "NT",
+};
 
 function buildTaxonomy(rows: BirdInventoryEntry[]): BirdOrderGroup[] {
   const orderMap = new Map<string, Map<string, BirdInventoryEntry[]>>();
@@ -63,6 +143,121 @@ function buildTaxonomy(rows: BirdInventoryEntry[]): BirdOrderGroup[] {
     };
   });
 }
+
+function formatPhotoPreviewCaption(photo: {
+  rating?: number;
+  county?: string;
+  state?: string;
+  country?: string;
+  location?: string;
+  capturedOn?: string;
+}): string {
+  const state = abbreviateStateForLocation(photo.state);
+  const place = [photo.county ?? "", state, photo.country ?? ""].filter(Boolean).join(", ");
+  return [place || photo.location || "Uploaded photo", photo.location ?? "", photo.capturedOn ?? ""].filter(Boolean).join(
+    " • ",
+  );
+}
+
+function formatPhotoPreviewRatingTag(photo: { rating?: number }): string {
+  const rating = Number.isFinite(Number(photo.rating)) ? Math.max(0, Math.min(5, Math.round(Number(photo.rating)))) : 0;
+  return rating > 0 ? `${"★".repeat(rating)}${"☆".repeat(5 - rating)}` : "";
+}
+
+function abbreviateStateForLocation(state?: string): string {
+  const raw = String(state ?? "").trim();
+  if (!raw) {
+    return "";
+  }
+
+  if (/^[A-Za-z]{2}$/.test(raw)) {
+    return raw.toUpperCase();
+  }
+
+  const normalized = raw.toLowerCase().replace(/[.]/g, "").replace(/\s+/g, " ").trim();
+  return STATE_ABBREVIATIONS[normalized] ?? raw;
+}
+
+function highestPhotoRating(photos: BirdInventoryEntry["photos"]): number {
+  return photos.reduce((max, photo) => {
+    const rating = Number.isFinite(Number(photo?.rating)) ? Math.max(0, Math.min(5, Math.round(Number(photo.rating)))) : 0;
+    return Math.max(max, rating);
+  }, 0);
+}
+
+function normalizeLocationToken(value?: string): string {
+  return String(value ?? "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9\s]/g, " ")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function buildPhotoLocationTokens(
+  photos: BirdInventoryEntry["photos"],
+  field: "country" | "state" | "county",
+): string {
+  const tokens = new Set<string>();
+
+  for (const photo of photos) {
+    const token = normalizeLocationToken(photo[field]);
+    if (token) {
+      tokens.add(token);
+    }
+  }
+
+  return Array.from(tokens).join("|");
+}
+
+function buildSeenLocationTokenMap(
+  records: typeof birdSeenLocationRecords,
+): Map<string, { countryTokens: string; stateTokens: string; countyTokens: string }> {
+  const tokenSets = new Map<string, { countries: Set<string>; states: Set<string>; counties: Set<string> }>();
+
+  for (const record of records) {
+    const key = String(record.birdKey ?? "").trim().toLowerCase();
+    if (!key) {
+      continue;
+    }
+
+    let entry = tokenSets.get(key);
+    if (!entry) {
+      entry = { countries: new Set<string>(), states: new Set<string>(), counties: new Set<string>() };
+      tokenSets.set(key, entry);
+    }
+
+    const countryToken = normalizeLocationToken(record.country);
+    const stateToken = normalizeLocationToken(record.state);
+    const countyToken = normalizeLocationToken(record.county);
+    if (countryToken) {
+      entry.countries.add(countryToken);
+    }
+    if (stateToken) {
+      entry.states.add(stateToken);
+    }
+    if (countyToken) {
+      entry.counties.add(countyToken);
+    }
+  }
+
+  const output = new Map<string, { countryTokens: string; stateTokens: string; countyTokens: string }>();
+  tokenSets.forEach((entry, key) => {
+    output.set(key, {
+      countryTokens: Array.from(entry.countries).join("|"),
+      stateTokens: Array.from(entry.states).join("|"),
+      countyTokens: Array.from(entry.counties).join("|"),
+    });
+  });
+  return output;
+}
+
+function seenLocationTokensForBird(
+  birdKey: string,
+): { countryTokens: string; stateTokens: string; countyTokens: string } | undefined {
+  return seenLocationTokenByBird.get(String(birdKey).toLowerCase());
+}
 ---
 
 <!doctype html>
@@ -73,10 +268,14 @@ function buildTaxonomy(rows: BirdInventoryEntry[]): BirdOrderGroup[] {
     <title>Bird Atlas | Ellis-Joyce Photography</title>
     <meta
       name="description"
-      content="A phylogeny-organized personal ABA bird atlas with seen status and photo coverage tracking."
+      content="A phylogeny-organized personal bird atlas with world checklist coverage, seen status, and photo tracking."
     />
     <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
-    <link rel="stylesheet" href="/assets/css/site.css" />
+    <link rel="stylesheet" href="/assets/css/site.css?v=20260312-2" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"
+    />
   </head>
   <body>
     <div class="page-wrap bird-page-wrap">
@@ -99,16 +298,7 @@ function buildTaxonomy(rows: BirdInventoryEntry[]): BirdOrderGroup[] {
 
       <main class="bird-main">
         <section class="bird-hero" data-reveal>
-          <p class="bird-hero-kicker">Ellis-Joyce Bird Atlas</p>
-          <h1>ABA Checklist, But Personal.</h1>
-          <p>
-            Phylogeny-first organization inspired by Cornell workflows. Track your sightings, surface target species,
-            and audit photo coverage in one place.
-          </p>
-          <div class="bird-hero-meta">
-            <span>{taxonomySource}</span>
-            <span>{inventory.metadata.speciesCount} tracked species</span>
-          </div>
+          <h1>BIRD MAP</h1>
         </section>
 
         <section class="bird-controls" data-bird-controls data-reveal>
@@ -118,7 +308,10 @@ function buildTaxonomy(rows: BirdInventoryEntry[]): BirdOrderGroup[] {
                 Common (1-3)
               </button>
               <button class="bird-mode-button" type="button" data-rarity-mode="rare">
-                Rare (1-5)
+                Rare (4-5)
+              </button>
+              <button class="bird-mode-button" type="button" data-rarity-mode="world">
+                World
               </button>
             </div>
             <label class="bird-search-shell" for="bird-search-input">
@@ -140,118 +333,259 @@ function buildTaxonomy(rows: BirdInventoryEntry[]): BirdOrderGroup[] {
             <button class="bird-filter-button" type="button" data-bird-filter="unseen">Not Seen</button>
             <button class="bird-filter-button" type="button" data-bird-filter="photographed">Photographed</button>
             <button class="bird-filter-button" type="button" data-bird-filter="needs-photo">Seen, Needs Photo</button>
+            <button class="bird-filter-button" type="button" data-bird-filter="rated">Rated</button>
           </div>
 
-          <p class="bird-manual-note">
-            Seen status and photo links are manually controlled in
-            <code>src/data/birds/personalStatus.ts</code>
-            and
-            <code>src/data/birds/personalPhotos.ts</code>.
-          </p>
+          <div class="bird-filter-row" role="group" aria-label="Rating threshold filters">
+            <button class="bird-filter-button is-active" type="button" data-bird-rating-min="0">Any Rating</button>
+            <button class="bird-filter-button" type="button" data-bird-rating-min="1">1+</button>
+            <button class="bird-filter-button" type="button" data-bird-rating-min="2">2+</button>
+            <button class="bird-filter-button" type="button" data-bird-rating-min="3">3+</button>
+            <button class="bird-filter-button" type="button" data-bird-rating-min="4">4+</button>
+            <button class="bird-filter-button" type="button" data-bird-rating-min="5">5 only</button>
+          </div>
+
         </section>
 
-        <section class="bird-stats" data-bird-stats data-reveal>
-          <article class="bird-stat-card">
-            <p class="bird-stat-label">Visible Species</p>
-            <strong class="bird-stat-value" data-stat-total>{defaultVisible.length}</strong>
-          </article>
-          <article class="bird-stat-card">
-            <p class="bird-stat-label">Seen</p>
-            <strong class="bird-stat-value" data-stat-seen>{defaultSeen}</strong>
-          </article>
-          <article class="bird-stat-card">
-            <p class="bird-stat-label">Photographed</p>
-            <strong class="bird-stat-value" data-stat-photo>{defaultPhotographed}</strong>
-          </article>
-          <article class="bird-stat-card">
-            <p class="bird-stat-label">Seen, Needs Photo</p>
-            <strong class="bird-stat-value" data-stat-backlog>{defaultSeenNeedsPhoto}</strong>
-          </article>
-        </section>
+        <section class="bird-layout">
+          <aside class="bird-layout-left">
+            <section class="bird-map-panel" data-bird-map-panel>
+              <div class="bird-map-head">
+                <h2>Photo Geography</h2>
+              </div>
+              <div class="bird-map-canvas" data-bird-map></div>
+              <div class="bird-map-time" data-bird-map-time hidden>
+                <div class="bird-map-time-head">
+                  <label for="bird-map-year-slider">Timeline</label>
+                  <span data-bird-map-time-value>All years</span>
+                </div>
+                <input
+                  id="bird-map-year-slider"
+                  type="range"
+                  min="0"
+                  max="0"
+                  step="1"
+                  value="0"
+                  data-bird-map-time-input
+                />
+              </div>
+              <div class="bird-map-scale" data-bird-map-scale>
+                <span data-bird-map-scale-min>0</span>
+                <div class="bird-map-scale-bar" data-bird-map-scale-bar></div>
+                <span data-bird-map-scale-max>0</span>
+              </div>
+              <p class="bird-map-scale-meta" data-bird-map-scale-meta></p>
+              <p class="bird-map-status" data-bird-map-status hidden></p>
+              <section class="bird-map-insights" data-bird-map-insights>
+                <header class="bird-map-insights-head">
+                  <h3 data-bird-map-insights-county>Click a county for insights</h3>
+                  <p data-bird-map-insights-subtitle>
+                    County details update from your current filters and eBird history.
+                  </p>
+                </header>
+                <div class="bird-map-insights-metrics">
+                  <article>
+                    <p>Filtered birds</p>
+                    <strong data-bird-map-insights-filtered>0</strong>
+                  </article>
+                  <article>
+                    <p>Seen there</p>
+                    <strong data-bird-map-insights-seen>0</strong>
+                  </article>
+                  <article>
+                    <p>Photographed there</p>
+                    <strong data-bird-map-insights-photo>0</strong>
+                  </article>
+                  <article>
+                    <p>Photo coverage</p>
+                    <strong data-bird-map-insights-coverage>0%</strong>
+                  </article>
+                </div>
+                <p class="bird-map-insights-rank" data-bird-map-insights-rank></p>
+                <div class="bird-map-insights-missing">
+                  <p>Top eBird species still missing a county photo</p>
+                  <ul data-bird-map-insights-missing-list></ul>
+                </div>
+              </section>
+            </section>
 
-        <section class="bird-taxonomy" data-bird-list-root data-reveal>
-          <p class="bird-empty-state" data-bird-empty hidden>No species match your current filters.</p>
+            <section class="bird-stats" data-bird-stats>
+              <article class="bird-stat-card">
+                <p class="bird-stat-label">Visible Species</p>
+                <strong class="bird-stat-value" data-stat-total>{defaultFiltered.length}</strong>
+              </article>
+              <article class="bird-stat-card">
+                <p class="bird-stat-label">Seen</p>
+                <strong class="bird-stat-value" data-stat-seen>{defaultSeen}</strong>
+              </article>
+              <article class="bird-stat-card">
+                <p class="bird-stat-label">Photographed</p>
+                <strong class="bird-stat-value" data-stat-photo>{defaultPhotographed}</strong>
+              </article>
+              <article class="bird-stat-card">
+                <p class="bird-stat-label">Seen, Needs Photo</p>
+                <strong class="bird-stat-value" data-stat-backlog>{defaultSeenNeedsPhoto}</strong>
+              </article>
+            </section>
+          </aside>
 
-          {
-            taxonomy.map((orderGroup) => (
-              <details class="bird-order" open data-bird-order>
-                <summary>
-                  <span class="bird-order-label">{orderGroup.order}</span>
-                  <span class="bird-order-count">{orderGroup.speciesCount} species</span>
-                </summary>
+          <section class="bird-layout-right">
+            <section class="bird-taxonomy" data-bird-taxonomy data-bird-list-root>
+              <p class="bird-empty-state" data-bird-empty hidden={defaultFiltered.length !== 0}>
+                No species match your current filters.
+              </p>
 
-                <div class="bird-order-body">
-                  {orderGroup.families.map((familyGroup) => (
-                    <section class="bird-family">
-                      <header>
-                        <h2>{familyGroup.family}</h2>
-                        <p>{familyGroup.species.length} species</p>
-                      </header>
+              {
+                taxonomy.map((orderGroup) => (
+                  <details
+                    class="bird-order"
+                    open
+                    data-bird-order
+                    hidden={!orderGroup.families.some((familyGroup) => familyGroup.species.some(isDefaultVisibleBird))}
+                  >
+                    <summary>
+                      <span class="bird-order-label">{orderGroup.order}</span>
+                      <span class="bird-order-count">{orderGroup.speciesCount} species</span>
+                    </summary>
 
-                      <div class="bird-species-grid">
-                        {familyGroup.species.map((bird) => (
-                          <article
-                            class={`bird-species${bird.seen ? " is-seen" : ""}${bird.hasPhoto ? " has-photo" : ""}`}
-                            data-bird-row
-                            data-rarity={bird.abaCode <= 3 ? "common" : "rare"}
-                            data-seen={bird.seen ? "true" : "false"}
-                            data-photo={bird.hasPhoto ? "true" : "false"}
-                            data-common-name={bird.commonName.toLowerCase()}
-                            data-scientific-name={bird.scientificName.toLowerCase()}
-                            data-family={bird.family.toLowerCase()}
-                            data-order={bird.order.toLowerCase()}
-                          >
-                            <div class="bird-species-main">
-                              <div class="bird-code-chip">ABA {bird.abaCode}</div>
-                              <h3>{bird.commonName}</h3>
-                              <p class="bird-scientific-name"><em>{bird.scientificName}</em></p>
-                              <p class="bird-species-id">
-                                {bird.speciesCode ? `eBird: ${bird.speciesCode}` : `ABA: ${bird.alphaCode}`}
-                              </p>
-                            </div>
+                    <div class="bird-order-body">
+                      {orderGroup.families.map((familyGroup) => (
+                        <section class="bird-family" hidden={!familyGroup.species.some(isDefaultVisibleBird)}>
+                          <header>
+                            <h2>{familyGroup.family}</h2>
+                            <p>{familyGroup.species.length} species</p>
+                          </header>
 
-                            <div class="bird-state-chips">
-                              <span class={`bird-state-chip ${bird.seen ? "is-on" : "is-off"}`}>
-                                {bird.seen ? "Seen" : "Not Seen"}
-                              </span>
-                              <span class={`bird-state-chip ${bird.hasPhoto ? "is-on" : "is-off"}`}>
-                                {bird.hasPhoto ? `${bird.photoCount} Photo${bird.photoCount > 1 ? "s" : ""}` : "No Photo"}
-                              </span>
-                            </div>
+                          <div class="bird-species-grid">
+                            {familyGroup.species.map((bird) => (
+                              <article
+                                class={`bird-species${bird.seen ? " is-seen" : ""}${bird.hasPhoto ? " has-photo" : ""}`}
+                                data-bird-row
+                                data-bird-key={bird.birdKey}
+                                data-rarity={bird.rarityBand}
+                                data-seen={bird.seen ? "true" : "false"}
+                                data-photo={bird.hasPhoto ? "true" : "false"}
+                                data-rating={highestPhotoRating(bird.photos)}
+                                data-first-seen-date={bird.firstSeenDate ?? ""}
+                                data-last-seen-date={bird.lastSeenDate ?? ""}
+                                data-common-name={bird.commonName.toLowerCase()}
+                                data-scientific-name={bird.scientificName.toLowerCase()}
+                                data-family={bird.family.toLowerCase()}
+                                data-order={bird.order.toLowerCase()}
+                                data-photo-country-tokens={buildPhotoLocationTokens(bird.photos, "country")}
+                                data-photo-state-tokens={buildPhotoLocationTokens(bird.photos, "state")}
+                                data-photo-county-tokens={buildPhotoLocationTokens(bird.photos, "county")}
+                                data-seen-country-tokens={seenLocationTokensForBird(bird.birdKey)?.countryTokens ?? ""}
+                                data-seen-state-tokens={seenLocationTokensForBird(bird.birdKey)?.stateTokens ?? ""}
+                                data-seen-county-tokens={seenLocationTokensForBird(bird.birdKey)?.countyTokens ?? ""}
+                                hidden={!isDefaultVisibleBird(bird)}
+                              >
+                                <div class="bird-species-top">
+                                  <div class="bird-chip-row">
+                                    {bird.rarityBand === "rare" && <div class="bird-rarity-chip">Rare</div>}
+                                    <div class="bird-state-chips">
+                                      <span
+                                        class={`bird-state-chip bird-state-chip--seen ${bird.seen ? "is-on" : "is-off"}${bird.seen && !bird.hasPhoto ? " is-seen-without-photo" : ""}`}
+                                        data-seen-chip
+                                      >
+                                        {bird.seen ? `Seen${bird.firstSeenDate ? ` ${bird.firstSeenDate}` : ""}` : "Not Seen"}
+                                      </span>
+                                      <span
+                                        class={`bird-state-chip bird-state-chip--photo ${bird.hasPhoto ? "is-on" : "is-off"}`}
+                                        data-photo-chip
+                                      >
+                                        {bird.hasPhoto ? `${bird.photoCount} Photo${bird.photoCount > 1 ? "s" : ""}` : "No Photo"}
+                                      </span>
+                                    </div>
+                                  </div>
 
-                            {
-                              bird.hasPhoto && bird.photos[0] ? (
-                                <figure class="bird-photo-preview">
-                                  <img src={bird.photos[0].src} alt={bird.photos[0].alt} loading="lazy" decoding="async" />
-                                  <figcaption>
-                                    {bird.photos[0].location ?? "Uploaded photo"}
-                                    {bird.photos[0].capturedOn ? ` • ${bird.photos[0].capturedOn}` : ""}
+                                  <h3 class="bird-title-line">
+                                    <span>{bird.commonName}</span>
+                                    <em class="bird-scientific-inline">{bird.scientificName}</em>
+                                  </h3>
+                                </div>
+
+                                <figure
+                                  class="bird-photo-preview"
+                                  data-photo-preview
+                                  hidden={!(bird.hasPhoto && bird.photos[0])}
+                                >
+                                  <img
+                                    src={bird.hasPhoto && bird.photos[0] ? bird.photos[0].src : ""}
+                                    alt={bird.hasPhoto && bird.photos[0] ? bird.photos[0].alt : ""}
+                                    loading="lazy"
+                                    decoding="async"
+                                    data-photo-preview-image
+                                  />
+                                  <span class="bird-photo-rating-tag" data-photo-preview-rating>
+                                    {bird.hasPhoto && bird.photos[0] ? formatPhotoPreviewRatingTag(bird.photos[0]) : ""}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    class="bird-photo-preview-arrow bird-photo-preview-arrow--prev"
+                                    data-photo-preview-prev
+                                    aria-label="Previous photo"
+                                    hidden
+                                  >
+                                    ‹
+                                  </button>
+                                  <button
+                                    type="button"
+                                    class="bird-photo-preview-arrow bird-photo-preview-arrow--next"
+                                    data-photo-preview-next
+                                    aria-label="Next photo"
+                                    hidden
+                                  >
+                                    ›
+                                  </button>
+                                  <figcaption data-photo-preview-caption>
+                                    {bird.hasPhoto && bird.photos[0] ? formatPhotoPreviewCaption(bird.photos[0]) : ""}
                                   </figcaption>
                                 </figure>
-                              ) : (
-                                <div class="bird-photo-preview is-empty">
+
+                                <div
+                                  class="bird-photo-preview is-empty"
+                                  data-photo-preview-empty
+                                  hidden={Boolean(bird.hasPhoto && bird.photos[0])}
+                                >
                                   <p>Upload a photo to complete this entry.</p>
                                 </div>
-                              )
-                            }
 
-                            {
-                              bird.personalNotes ? <p class="bird-note">{bird.personalNotes}</p> : null
-                            }
-                          </article>
-                        ))}
-                      </div>
-                    </section>
-                  ))}
-                </div>
-              </details>
-            ))
-          }
+                                <p class="bird-note" data-note hidden={!bird.personalNotes}>{bird.personalNotes ?? ""}</p>
+                              </article>
+                            ))}
+                          </div>
+                        </section>
+                      ))}
+                    </div>
+                  </details>
+                ))
+              }
+            </section>
+          </section>
         </section>
       </main>
     </div>
 
+    <script id="bird-map-seed" type="application/json" is:inline set:html={JSON.stringify(mapSeedPhotos)}></script>
+    <script
+      id="bird-map-seen-seed"
+      type="application/json"
+      is:inline
+      set:html={JSON.stringify(mapSeedSeenLocations)}
+    ></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-app-compat.js" defer></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-firestore-compat.js" defer></script>
+    <script is:inline src="/__/firebase/init.js" defer></script>
     <script is:inline src="/assets/js/site.js" defer></script>
-    <script is:inline src="/assets/js/birds.js" defer></script>
+    <script is:inline src="/assets/js/bird-admin-shared.js?v=20260311-1" defer></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js" defer></script>
+    <script
+      is:inline
+      src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"
+      defer
+    ></script>
+    <script is:inline src="/assets/js/birds-map.js?v=20260311-6" defer></script>
+    <script is:inline src="/assets/js/birds.js?v=20260312-2" defer></script>
   </body>
 </html>

@@ -1,0 +1,139 @@
+---
+import { getPhotographyGalleryData } from "../../data/photographyGalleryData";
+
+interface StaticPathProps {
+  tripSlug: string;
+  tripTitle: string;
+  tripYear: string;
+}
+
+export function getStaticPaths() {
+  const galleryData = getPhotographyGalleryData();
+  const getLegacyPathSegment = (pathValue: string): string => {
+    const normalized = String(pathValue || "")
+      .split("?")[0]
+      .split("#")[0]
+      .trim()
+      .replace(/\/+$/g, "");
+    if (!normalized.startsWith("/photography/")) {
+      return "";
+    }
+    const segments = normalized.split("/").filter(Boolean);
+    const last = segments[segments.length - 1];
+    if (!last || last === "photography") {
+      return "";
+    }
+    return last;
+  };
+
+  return galleryData.trips
+    .map((trip) => {
+      const segment = getLegacyPathSegment(trip.legacyPath);
+      if (!segment) {
+        return null;
+      }
+
+      return {
+        params: { trip: segment },
+        props: {
+          tripSlug: trip.slug,
+          tripTitle: trip.title,
+          tripYear: trip.year,
+        } satisfies StaticPathProps,
+      };
+    })
+    .filter(Boolean);
+}
+
+const { tripSlug, tripTitle, tripYear } = Astro.props as StaticPathProps;
+const galleryData = getPhotographyGalleryData();
+const photos = galleryData.photos.filter((photo) => photo.tripSlug === tripSlug);
+
+const photoRating = (photo: { rating?: number }): number => {
+  const numeric = Number(photo.rating);
+  if (!Number.isFinite(numeric)) {
+    return 0;
+  }
+  return Math.max(0, Math.min(5, Math.round(numeric)));
+};
+const photoRatingLabel = (photo: { rating?: number }): string => {
+  const rating = photoRating(photo);
+  return rating > 0 ? `${"\u2605".repeat(rating)} ${rating}/5` : "Unrated";
+};
+const metaLabel = (photo: { capturedOn?: string; location?: string }): string =>
+  [photo.capturedOn ?? "", photo.location ?? ""].filter(Boolean).join(" • ");
+
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tripTitle} | Ellis-Joyce Photography</title>
+    <meta name="description" content={`Dense trip gallery for ${tripTitle}.`} />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body>
+    <div class="page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/photography">Photography</a>
+          <a class="nav-link" href="/photography/admin">Admin</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="intro-panel" data-reveal>
+          <h1>{tripTitle}</h1>
+          <p>{tripYear ? `${tripYear} • ` : ""}{photos.length} photos</p>
+          <a class="btn secondary" href="/photography">Back to Photography</a>
+        </section>
+
+        <section class="section" data-reveal>
+          <div class="trip-detail-grid">
+            {
+              photos.map((photo) => (
+                <figure class="trip-photo-card">
+                  <a
+                    href={photo.src}
+                    data-photo-modal
+                    data-photo-full-res={photo.src}
+                    data-photo-title={tripTitle}
+                    data-photo-caption={metaLabel(photo)}
+                    data-photo-rating={photoRatingLabel(photo)}
+                    data-photo-iso={photo.iso !== undefined ? String(photo.iso) : undefined}
+                    data-photo-shutter={photo.shutterSpeed ?? undefined}
+                    data-photo-aperture={photo.aperture ?? undefined}
+                    data-photo-camera={photo.camera ?? undefined}
+                    data-photo-lens={photo.lens ?? undefined}
+                  >
+                    <img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" />
+                  </a>
+                  <figcaption>
+                    <strong>{tripTitle}</strong>
+                    <span>{[photoRatingLabel(photo), metaLabel(photo)].filter(Boolean).join(" • ")}</span>
+                  </figcaption>
+                </figure>
+              ))
+            }
+          </div>
+        </section>
+      </main>
+    </div>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/exifr/dist/full.umd.js" defer></script>
+    <script is:inline src="/assets/js/site.js" defer></script>
+    <script is:inline src="/assets/js/photo-lightbox.js?v=20260309-2" defer></script>
+  </body>
+</html>

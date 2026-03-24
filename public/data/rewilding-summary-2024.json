@@ -1,0 +1,102 @@
+{
+  "metadata": {
+    "generated_at_utc": "2026-02-25T04:11:26+00:00",
+    "method": "GPW cultivated-grassland probability (2024) aggregated to 5 arcminute grid via mean and multiplied by Hayek et al. animal-land hectares and COC rasters.",
+    "notes": [
+      "Values are global opportunity-style estimates for communication, not a policy prescription.",
+      "GPW aggregation to 5 arcminute cells smooths local probability extremes.",
+      "COC values represent suppressed potential vegetation carbon (stock opportunity)."
+    ],
+    "inputs": {
+      "gpw_cultiv_2024_url": "https://s3.eu-central-1.wasabisys.com/arco/gpw_cultiv.grassland_rf.med.filt_p_30m_20240101_20241231_go_epsg.4326_v2.tif",
+      "hayek_animal_hectares_zip_url": "https://archive.nyu.edu/bitstream/2451/60073/2/nyu_2451_60074.zip",
+      "hayek_animal_coc_zip_url": "https://archive.nyu.edu/bitstream/2451/60073/1/nyu_2451_60073.zip"
+    }
+  },
+  "summary": {
+    "median": {
+      "global_animal_land_mha": 3323.214,
+      "weighted_rewildable_area_mha": 599.654,
+      "weighted_rewildable_share_of_animal_land": 0.18044,
+      "weighted_carbon_opportunity_gtco2": 65.035,
+      "adoption_scenarios": [
+        {
+          "share_percent": 25,
+          "rewilded_area_mha": 149.914,
+          "carbon_opportunity_gtco2": 16.259
+        },
+        {
+          "share_percent": 50,
+          "rewilded_area_mha": 299.827,
+          "carbon_opportunity_gtco2": 32.517
+        },
+        {
+          "share_percent": 75,
+          "rewilded_area_mha": 449.741,
+          "carbon_opportunity_gtco2": 48.776
+        },
+        {
+          "share_percent": 100,
+          "rewilded_area_mha": 599.654,
+          "carbon_opportunity_gtco2": 65.035
+        }
+      ]
+    },
+    "low": {
+      "global_animal_land_mha": 3296.519,
+      "weighted_rewildable_area_mha": 602.406,
+      "weighted_rewildable_share_of_animal_land": 0.18274,
+      "weighted_carbon_opportunity_gtco2": 40.271,
+      "adoption_scenarios": [
+        {
+          "share_percent": 25,
+          "rewilded_area_mha": 150.601,
+          "carbon_opportunity_gtco2": 10.068
+        },
+        {
+          "share_percent": 50,
+          "rewilded_area_mha": 301.203,
+          "carbon_opportunity_gtco2": 20.136
+        },
+        {
+          "share_percent": 75,
+          "rewilded_area_mha": 451.804,
+          "carbon_opportunity_gtco2": 30.203
+        },
+        {
+          "share_percent": 100,
+          "rewilded_area_mha": 602.406,
+          "carbon_opportunity_gtco2": 40.271
+        }
+      ]
+    },
+    "high": {
+      "global_animal_land_mha": 3273.16,
+      "weighted_rewildable_area_mha": 587.921,
+      "weighted_rewildable_share_of_animal_land": 0.17962,
+      "weighted_carbon_opportunity_gtco2": 88.628,
+      "adoption_scenarios": [
+        {
+          "share_percent": 25,
+          "rewilded_area_mha": 146.98,
+          "carbon_opportunity_gtco2": 22.157
+        },
+        {
+          "share_percent": 50,
+          "rewilded_area_mha": 293.961,
+          "carbon_opportunity_gtco2": 44.314
+        },
+        {
+          "share_percent": 75,
+          "rewilded_area_mha": 440.941,
+          "carbon_opportunity_gtco2": 66.471
+        },
+        {
+          "share_percent": 100,
+          "rewilded_area_mha": 587.921,
+          "carbon_opportunity_gtco2": 88.628
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,329 @@
+---
+import { photographyTrips } from "../../../data/photographyTrips";
+import { getPhotographyGalleryData } from "../../../data/photographyGalleryData";
+
+const galleryData = getPhotographyGalleryData();
+
+const seedTrips = photographyTrips.map((trip) => ({
+  slug: trip.slug,
+  title: trip.title,
+  year: trip.year,
+  legacyPath: trip.legacyPath,
+  coverImage: trip.coverImage,
+  showOnPhotographyPage: trip.showOnPhotographyPage !== false,
+  showInBasePage: trip.showInBasePage ?? trip.showOnPhotographyPage !== false,
+  showInCarousel: trip.showInCarousel ?? trip.showOnPhotographyPage !== false,
+}));
+
+const seedPhotos = galleryData.photos.map((photo) => ({
+  id: photo.id,
+  tripSlug: photo.tripSlug,
+  src: photo.src,
+  alt: photo.alt,
+  rating: photo.rating ?? 0,
+  isFavorite: photo.isFavorite === true || (Array.isArray(photo.tags) && photo.tags.includes("featured")),
+  capturedOn: photo.capturedOn ?? "",
+  location: photo.location ?? "",
+  subject: photo.subject ?? "",
+  tags: Array.isArray(photo.tags) ? photo.tags : [],
+  iso: photo.iso ?? null,
+  shutterSpeed: photo.shutterSpeed ?? "",
+  aperture: photo.aperture ?? "",
+  camera: photo.camera ?? "",
+  lens: photo.lens ?? "",
+}));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Photography Admin | Ellis-Joyce</title>
+    <meta
+      name="description"
+      content="Admin workflow for trip-organized photography metadata and queued image uploads."
+    />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body>
+    <div class="page-wrap bird-page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/photography">Photography</a>
+          <a class="nav-link" href="/photography/birds">Bird Atlas</a>
+        </nav>
+      </header>
+
+      <main class="bird-main">
+        <section class="bird-hero bird-admin-hero" data-reveal>
+          <p class="bird-hero-kicker">Photography Admin</p>
+          <h1>Trip + Photo Metadata Manager</h1>
+          <p>
+            Edit existing gallery entries, update ratings, and queue multiple images with drag/drop uploads.
+            Drafts save locally and can sync to Firebase when signed in.
+          </p>
+          <div class="bird-hero-meta">
+            <span>{seedTrips.length} trips loaded</span>
+            <span>{seedPhotos.length} photos loaded</span>
+          </div>
+        </section>
+
+        <section class="bird-controls bird-admin-toolbar photo-admin-toolbar" data-reveal>
+          <div class="bird-controls-top">
+            <label class="bird-search-shell" for="photo-admin-search">
+              <span>Photo Search</span>
+              <input
+                id="photo-admin-search"
+                type="search"
+                autocomplete="off"
+                placeholder="Alt text, location, tags, trip"
+                data-photo-admin-search
+              />
+            </label>
+            <label class="bird-search-shell">
+              <span>Trip Filter</span>
+              <select data-photo-admin-trip-filter>
+                <option value="all">All trips</option>
+              </select>
+            </label>
+            <label class="bird-search-shell">
+              <span>Rating Filter</span>
+              <select data-photo-admin-rating-filter>
+                <option value="0">Any rating</option>
+                <option value="5">5 stars only</option>
+                <option value="4">4+ stars</option>
+                <option value="3">3+ stars</option>
+                <option value="2">2+ stars</option>
+                <option value="1">1+ stars</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="bird-admin-actions">
+            <button class="btn secondary" type="button" data-photo-admin-clear-filters>Clear Filters</button>
+            <button class="btn secondary" type="button" data-photo-admin-save>Save Draft</button>
+            <button class="btn secondary" type="button" data-photo-admin-reset>Reset Draft</button>
+            <button class="btn secondary" type="button" data-photo-admin-sync>Sync Firebase</button>
+            <button class="btn secondary" type="button" data-photo-admin-signin>Google Sign-in</button>
+            <button class="btn primary" type="button" data-photo-admin-export-photos>Download photographyPhotos.ts</button>
+            <button class="btn primary" type="button" data-photo-admin-export-trips>Download photographyTrips.ts</button>
+          </div>
+
+          <p class="bird-manual-note" data-photo-admin-auth-state>
+            Firebase not connected yet. You can still work locally and export files.
+          </p>
+          <p class="bird-manual-note" data-photo-admin-status-message>
+            Local draft is loaded. Pick a photo from the left list to start editing.
+          </p>
+        </section>
+
+        <section class="bird-admin-layout" data-photo-admin-root data-reveal>
+          <aside class="bird-admin-list-panel">
+            <header>
+              <h2>Photos</h2>
+              <p data-photo-admin-list-count></p>
+            </header>
+            <div class="bird-admin-list photo-admin-list" data-photo-admin-list></div>
+            <p class="bird-empty-state" data-photo-admin-empty-list hidden>No photos match the active filters.</p>
+          </aside>
+
+          <section class="bird-admin-editor-panel">
+            <p class="bird-empty-state" data-photo-admin-empty-editor>Select a photo to edit metadata.</p>
+
+            <div class="bird-admin-editor photo-admin-editor" data-photo-admin-editor hidden>
+              <header>
+                <p class="bird-code-chip" data-photo-admin-rating-chip></p>
+                <h2 data-photo-admin-photo-title></h2>
+                <p class="bird-species-id" data-photo-admin-photo-trip></p>
+              </header>
+
+              <figure class="photo-admin-preview">
+                <img data-photo-admin-preview-image alt="Selected photo preview" />
+              </figure>
+
+              <div class="bird-admin-field-grid">
+                <label>
+                  <span>Photo ID</span>
+                  <input type="text" data-photo-admin-id readonly />
+                </label>
+                <label>
+                  <span>Trip</span>
+                  <select data-photo-admin-trip></select>
+                </label>
+                <label>
+                  <span>Rating</span>
+                  <select data-photo-admin-rating>
+                    <option value="0">Unrated</option>
+                    <option value="5">★★★★★ 5</option>
+                    <option value="4">★★★★ 4</option>
+                    <option value="3">★★★ 3</option>
+                    <option value="2">★★ 2</option>
+                    <option value="1">★ 1</option>
+                  </select>
+                </label>
+                <label class="bird-admin-checkbox">
+                  <input type="checkbox" data-photo-admin-star />
+                  <span>Favorite (show in Favorites!)</span>
+                </label>
+                <label>
+                  <span>Captured On</span>
+                  <input type="date" data-photo-admin-date />
+                </label>
+                <label>
+                  <span>Subject</span>
+                  <input type="text" placeholder="e.g., Sandpiper at shoreline" data-photo-admin-subject />
+                </label>
+                <label>
+                  <span>Location</span>
+                  <input type="text" placeholder="City, Region" data-photo-admin-location />
+                </label>
+              </div>
+
+              <label class="bird-admin-notes-field">
+                <span>Alt Text</span>
+                <textarea rows="2" placeholder="Describe the photo for accessibility" data-photo-admin-alt></textarea>
+              </label>
+
+              <label class="bird-admin-notes-field">
+                <span>Tags (comma separated)</span>
+                <input type="text" data-photo-admin-tags />
+              </label>
+
+              <label class="bird-admin-notes-field">
+                <span>Source URL / Path</span>
+                <input type="text" data-photo-admin-src />
+              </label>
+
+              <div class="bird-admin-photo-form-actions">
+                <button class="btn secondary" type="button" data-photo-admin-delete>Delete Photo</button>
+              </div>
+            </div>
+
+            <section class="bird-admin-photo-section photo-admin-upload-section">
+              <header>
+                <h3>Queued Uploads</h3>
+                <p>Drop many images at once. They queue and upload sequentially with progress.</p>
+              </header>
+
+              <div class="photo-admin-dropzone" data-photo-admin-dropzone tabindex="0" role="button">
+                <p>Drop image files here or click to browse.</p>
+                <input type="file" accept="image/*" multiple data-photo-admin-file-input />
+              </div>
+
+              <div class="bird-admin-field-grid">
+                <label>
+                  <span>Trip for uploads</span>
+                  <select data-photo-admin-upload-trip></select>
+                </label>
+                <label>
+                  <span>Default rating</span>
+                  <select data-photo-admin-upload-rating>
+                    <option value="0">Unrated</option>
+                    <option value="5">★★★★★ 5</option>
+                    <option value="4" selected>★★★★ 4</option>
+                    <option value="3">★★★ 3</option>
+                    <option value="2">★★ 2</option>
+                    <option value="1">★ 1</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Default date</span>
+                  <input type="date" data-photo-admin-upload-date />
+                </label>
+                <label>
+                  <span>Default location</span>
+                  <input type="text" placeholder="Virginia, USA" data-photo-admin-upload-location />
+                </label>
+              </div>
+
+              <div class="bird-admin-upload-progress" data-photo-admin-upload-progress hidden>
+                <progress max="100" value="0" data-photo-admin-upload-progress-bar></progress>
+                <p data-photo-admin-upload-progress-label></p>
+              </div>
+
+              <div class="photo-admin-upload-actions">
+                <button class="btn secondary" type="button" data-photo-admin-upload-start>Upload Queue</button>
+                <button class="btn secondary" type="button" data-photo-admin-upload-clear>Clear Queue</button>
+              </div>
+
+              <div class="photo-admin-queue" data-photo-admin-queue></div>
+            </section>
+
+            <section class="bird-admin-photo-section photo-admin-trip-create">
+              <header>
+                <h3>Create Trip</h3>
+                <p>Add a new trip slug so uploads can be organized immediately.</p>
+              </header>
+
+              <div class="bird-admin-field-grid">
+                <label>
+                  <span>Trip title</span>
+                  <input type="text" data-photo-admin-new-trip-title />
+                </label>
+                <label>
+                  <span>Year</span>
+                  <input type="text" placeholder="2026" data-photo-admin-new-trip-year />
+                </label>
+                <label>
+                  <span>Legacy path</span>
+                  <input type="text" placeholder="/photography/my-trip" data-photo-admin-new-trip-path />
+                </label>
+                <label class="bird-admin-checkbox">
+                  <input type="checkbox" data-photo-admin-new-trip-base checked />
+                  <span>Show this trip in Trip Galleries (base page)</span>
+                </label>
+                <label class="bird-admin-checkbox">
+                  <input type="checkbox" data-photo-admin-new-trip-carousel checked />
+                  <span>Show this trip in Trips carousel</span>
+                </label>
+              </div>
+              <div class="bird-admin-photo-form-actions">
+                <button class="btn secondary" type="button" data-photo-admin-create-trip>Add Trip</button>
+              </div>
+            </section>
+
+            <section class="bird-admin-photo-section photo-admin-trip-visibility">
+              <header>
+                <h3>Trip Gallery Visibility</h3>
+                <p>Choose which trips appear in the base Trip Galleries section and which appear in the carousel.</p>
+              </header>
+              <div class="photo-admin-trip-visibility-groups">
+                <section class="photo-admin-trip-visibility-group">
+                  <h4>Trip Galleries (Base Page)</h4>
+                  <div class="photo-admin-trip-visibility-list" data-photo-admin-trip-base-list></div>
+                </section>
+                <section class="photo-admin-trip-visibility-group">
+                  <h4>Trips Carousel</h4>
+                  <div class="photo-admin-trip-visibility-list" data-photo-admin-trip-carousel-list></div>
+                </section>
+              </div>
+            </section>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script id="photo-admin-seed" type="application/json" is:inline set:html={JSON.stringify({ trips: seedTrips, photos: seedPhotos })}></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-app-compat.js" defer></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-auth-compat.js" defer></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-firestore-compat.js" defer></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-storage-compat.js" defer></script>
+    <script is:inline src="/__/firebase/init.js" defer></script>
+    <script is:inline src="/assets/js/site.js" defer></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/lite.umd.js" defer></script>
+    <script is:inline src="/assets/js/bird-admin-shared.js?v=20260322-1" defer></script>
+    <script is:inline src="/assets/js/photography-admin.js?v=20260322-1" defer></script>
+  </body>
+</html>

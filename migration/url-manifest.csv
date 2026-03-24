@@ -1,0 +1,35 @@
+path,final_url,status_code,title,recommended_action,section
+"/","https://www.ellis-joyce.com/",200,"Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,general
+"/accomodations","https://www.ellis-joyce.com/accomodations",200,"Accomodations &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,wedding
+"/bridal-party","https://www.ellis-joyce.com/bridal-party",200,"Bridal Party &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,wedding
+"/cart","https://www.ellis-joyce.com/cart",200,"Gwendolyn and Justin Ellis-Joyce",drop-or-redirect,system
+"/details","https://www.ellis-joyce.com/details",200,"Wedding Details &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,wedding
+"/ellis-joyce","https://www.ellis-joyce.com/ellis-joyce",200,"The Ellis-Joyce Blog &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellis-joyce/animals-evidence","https://www.ellis-joyce.com/ellis-joyce/animals-evidence",200,"It’s Worse Than You Think: Please Stop Eating Animals &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellis-joyce/category/monthly","https://www.ellis-joyce.com/ellis-joyce/category/monthly",200,"monthly &mdash; The Ellis-Joyce Blog &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellis-joyce/category/science","https://www.ellis-joyce.com/ellis-joyce/category/science",200,"science &mdash; The Ellis-Joyce Blog &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellis-joyce/flywire-feedback","https://www.ellis-joyce.com/ellis-joyce/flywire-feedback",200,"The Flywire Minimum Feedback Data Challenge and “The Bitter Lesson” &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellis-joyce/tag/science","https://www.ellis-joyce.com/ellis-joyce/tag/science",200,"science &mdash; The Ellis-Joyce Blog &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellisjoycemonthly","https://www.ellis-joyce.com/ellisjoycemonthly",200,"Blog 3 &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellisjoycemonthly/blog-post-title-four-ps45a","https://www.ellis-joyce.com/ellisjoycemonthly/blog-post-title-four-ps45a",200,"Blog Post Title Four &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellisjoycemonthly/blog-post-title-one-85sfb","https://www.ellis-joyce.com/ellisjoycemonthly/blog-post-title-one-85sfb",200,"Blog Post Title One &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellisjoycemonthly/blog-post-title-three-x6cs8","https://www.ellis-joyce.com/ellisjoycemonthly/blog-post-title-three-x6cs8",200,"Blog Post Title Three &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellisjoycemonthly/blog-post-title-two-8ntkm","https://www.ellis-joyce.com/ellisjoycemonthly/blog-post-title-two-8ntkm",200,"Blog Post Title Two &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellisjoycemonthly/category/monthly","https://www.ellis-joyce.com/ellisjoycemonthly/category/monthly",200,"monthly &mdash; Blog 3 &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellisjoycemonthly/gwen-justin-jan-and-feb","https://www.ellis-joyce.com/ellisjoycemonthly/gwen-justin-jan-and-feb",200,"Gwen + Justin Jan and Feb &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellisjoycemonthly/gwenjustin-november","https://www.ellis-joyce.com/ellisjoycemonthly/gwenjustin-november",200,"Gwen+Justin November 2024 &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellisjoycemonthly/justin-gwen-december","https://www.ellis-joyce.com/ellisjoycemonthly/justin-gwen-december",200,"Justin + Gwen December &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/ellisjoycemonthly/tag/monthly","https://www.ellis-joyce.com/ellisjoycemonthly/tag/monthly",200,"monthly &mdash; Blog 3 &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/gwen","https://www.ellis-joyce.com/gwen",200,"General 3 &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/home","https://www.ellis-joyce.com/home",200,"Gwendolyn and Justin Ellis-Joyce",redirect-to-/,general
+"/justin","https://www.ellis-joyce.com/justin",404,"Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,blogs-cv
+"/photography","https://www.ellis-joyce.com/photography",200,"Photography &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,photography
+"/photography/florida-2025","https://www.ellis-joyce.com/photography/florida-2025",200,"Florida 2025 &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,photography
+"/photography/md2024","https://www.ellis-joyce.com/photography/md2024",200,"Mid-Atlantic 2024 &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,photography
+"/photography/peru","https://www.ellis-joyce.com/photography/peru",200,"Peru Birds &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,photography
+"/registry","https://www.ellis-joyce.com/registry",200,"Registry &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,wedding
+"/rsvp","https://www.ellis-joyce.com/rsvp",200,"RSVP 1 &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,wedding
+"/search","https://www.ellis-joyce.com/search",200,"Gwendolyn and Justin Ellis-Joyce",drop-or-redirect,system
+"/shuttle-rsvp","https://www.ellis-joyce.com/shuttle-rsvp",200,"RSVP 1 &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,wedding
+"/weddinghome","https://www.ellis-joyce.com/weddinghome",200,"Wedding Home &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,wedding
+"/weddingphotos","https://www.ellis-joyce.com/weddingphotos",200,"Wedding Photos &mdash; Gwendolyn and Justin Ellis-Joyce",rebuild-same-path,wedding

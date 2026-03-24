@@ -1,0 +1,330 @@
+---
+import { getBirdInventoryData } from "../../../../data/birds/birdInventory";
+
+const inventory = getBirdInventoryData();
+
+const seedSpecies = inventory.species.map((bird) => ({
+  birdKey: bird.birdKey,
+  commonName: bird.commonName,
+  scientificName: bird.scientificName,
+  order: bird.order,
+  family: bird.family,
+  abaCode: bird.abaCode,
+  rarityBand: bird.rarityBand,
+  seen: bird.seen,
+  firstSeenDate: bird.firstSeenDate ?? "",
+  lastSeenDate: bird.lastSeenDate ?? "",
+  personalNotes: bird.personalNotes ?? "",
+  photos: bird.photos,
+}));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bird Atlas Admin | Ellis-Joyce Photography</title>
+    <meta
+      name="description"
+      content="Local admin workflow for seen statuses and photo records in the Ellis-Joyce bird atlas."
+    />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body>
+    <div class="page-wrap bird-page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/photography">Photography</a>
+          <a class="nav-link" href="/photography/birds">Bird Atlas</a>
+        </nav>
+      </header>
+
+      <main class="bird-main">
+        <section class="bird-hero bird-admin-hero" data-reveal>
+          <p class="bird-hero-kicker">Bird Atlas Admin</p>
+          <h1>Edit Sightings + Photo Records</h1>
+          <p>
+            Changes save to browser draft immediately and sync to Firebase when signed in. You can still export
+            <code>personalStatus.ts</code>
+            and
+            <code>personalPhotos.ts</code>
+            snapshots for repository backups.
+          </p>
+          <div class="bird-hero-meta">
+            <span>{seedSpecies.length} species loaded</span>
+            <span>Default view: codes 1-3</span>
+          </div>
+        </section>
+
+        <section class="bird-controls bird-admin-toolbar" data-reveal data-admin-protected hidden>
+          <div class="bird-controls-top">
+            <div class="bird-mode-toggle" role="group" aria-label="Rarity visibility">
+              <button class="bird-mode-button is-active" type="button" data-admin-rarity="common">
+                Common (1-3)
+              </button>
+              <button class="bird-mode-button" type="button" data-admin-rarity="rare">
+                Rare (4-5)
+              </button>
+              <button class="bird-mode-button" type="button" data-admin-rarity="world">
+                World
+              </button>
+            </div>
+            <label class="bird-search-shell" for="bird-admin-search">
+              <span>Species Search</span>
+              <input
+                id="bird-admin-search"
+                type="search"
+                autocomplete="off"
+                placeholder="Search species, family, order"
+                data-admin-search
+              />
+            </label>
+          </div>
+
+          <div class="bird-filter-row" role="group" aria-label="Admin species filters">
+            <button class="bird-filter-button is-active" type="button" data-admin-filter="all">All</button>
+            <button class="bird-filter-button" type="button" data-admin-filter="seen">Seen</button>
+            <button class="bird-filter-button" type="button" data-admin-filter="unseen">Not Seen</button>
+            <button class="bird-filter-button" type="button" data-admin-filter="photographed">Photographed</button>
+            <button class="bird-filter-button" type="button" data-admin-filter="needs-photo">Seen, Needs Photo</button>
+            <button class="bird-filter-button" type="button" data-admin-filter="rated">Rated</button>
+            <button class="bird-filter-button" type="button" data-admin-filter="unrated">Unrated</button>
+            <button class="bird-filter-button" type="button" data-admin-filter="edited">Edited</button>
+          </div>
+
+          <div class="bird-admin-actions">
+            <button class="btn secondary" type="button" data-admin-save>Save Draft</button>
+            <button class="btn secondary" type="button" data-admin-reset>Reset Draft</button>
+            <button class="btn primary" type="button" data-admin-export-status>Download personalStatus.ts</button>
+            <button class="btn primary" type="button" data-admin-export-photos>Download personalPhotos.ts</button>
+          </div>
+
+          <p class="bird-manual-note" data-admin-status-message>
+            Draft saves locally first. Signed-in sessions (Google or email/password) sync updates to Firebase. Export
+            files and copy them into
+            <code>src/data/birds/</code>
+            if you want repository snapshots.
+          </p>
+        </section>
+
+        <section class="bird-admin-bulk-shell" data-reveal data-admin-protected hidden>
+          <header class="bird-admin-bulk-shell-head">
+            <h2>Bulk Upload Queue</h2>
+            <p>
+              Drop many images, review each row, then upload in sequence. Captured date is auto-detected from metadata
+              when available. Ratings entered here apply to individual photos.
+            </p>
+          </header>
+          <input type="file" accept="image/*" multiple data-admin-bulk-file hidden />
+          <button
+            class="bird-admin-bulk-dropzone"
+            type="button"
+            data-admin-bulk-dropzone
+            aria-label="Queue local bird photos for upload"
+          >
+            Drop bird images here, or click to choose files.
+          </button>
+          <div class="bird-admin-bulk-actions">
+            <button class="btn secondary" type="button" data-admin-bulk-start>Upload Queued Photos</button>
+            <button class="btn secondary" type="button" data-admin-bulk-clear>Clear Queue</button>
+          </div>
+          <div class="bird-admin-upload-progress" data-admin-bulk-progress hidden>
+            <progress max="100" value="0" data-admin-bulk-progress-bar></progress>
+            <p data-admin-bulk-progress-label></p>
+          </div>
+          <div class="bird-admin-bulk-queue" data-admin-bulk-queue></div>
+        </section>
+
+        <section class="bird-admin-layout" data-admin-root data-reveal data-admin-protected hidden>
+          <aside class="bird-admin-list-panel">
+            <header>
+              <h2>Species</h2>
+              <p data-admin-list-count></p>
+            </header>
+            <div class="bird-admin-list" data-admin-list></div>
+            <p class="bird-empty-state" data-admin-empty-list hidden>No species match the active filters.</p>
+          </aside>
+
+          <section class="bird-admin-editor-panel">
+            <p class="bird-empty-state" data-admin-empty-editor>Select a species to edit.</p>
+
+            <div class="bird-admin-editor" data-admin-editor hidden>
+              <header>
+                <p class="bird-code-chip" data-admin-aba-code></p>
+                <h2 data-admin-common-name></h2>
+                <p class="bird-scientific-name" data-admin-scientific-name></p>
+                <p class="bird-species-id" data-admin-taxonomy></p>
+              </header>
+
+              <div class="bird-admin-field-grid">
+                <label class="bird-admin-checkbox">
+                  <input type="checkbox" data-admin-seen />
+                  <span>Seen</span>
+                </label>
+
+                <label>
+                  <span>First Seen</span>
+                  <input type="date" data-admin-first-seen />
+                </label>
+              </div>
+
+              <label class="bird-admin-notes-field">
+                <span>Notes</span>
+                <textarea rows="3" placeholder="Field marks, location context, behavior" data-admin-notes></textarea>
+              </label>
+
+              <section class="bird-admin-photo-section">
+                <header>
+                  <h3>Photo Records</h3>
+                  <p>These records power photo coverage and card previews on the public atlas.</p>
+                </header>
+
+                <div class="bird-admin-upload-hint">
+                  <label>
+                    <span>Local File Helper (optional)</span>
+                    <input type="file" accept="image/*" multiple data-admin-local-file />
+                  </label>
+                  <p data-admin-local-file-hint>
+                    Pick one or more local photos to queue. On Add Photo, each file is downsampled for web delivery,
+                    uploaded to Firebase Storage, then saved to this species.
+                  </p>
+                  <div class="bird-admin-upload-progress" data-admin-upload-progress hidden>
+                    <progress max="100" value="0" data-admin-upload-progress-bar></progress>
+                    <p data-admin-upload-progress-label></p>
+                  </div>
+                  <img data-admin-local-preview hidden alt="Local upload preview" />
+                </div>
+
+                <form class="bird-admin-photo-form" data-admin-photo-form>
+                  <label>
+                    <span>Species</span>
+                    <input
+                      type="text"
+                      placeholder="sonspa or Song Sparrow"
+                      data-admin-photo-species
+                      list="bird-admin-species-suggestions"
+                    />
+                  </label>
+                  <label>
+                    <span>Photo Source URL or Path</span>
+                    <input type="text" placeholder="https://... or /assets/images/birds/..." data-admin-photo-src />
+                  </label>
+                  <label>
+                    <span>Alt Text</span>
+                    <input type="text" data-admin-photo-alt />
+                  </label>
+                  <label>
+                    <span>Captured On</span>
+                    <input type="date" data-admin-photo-date />
+                  </label>
+                  <label>
+                    <span>Photo Rating</span>
+                    <input type="hidden" value="0" data-admin-photo-rating />
+                    <div class="bird-admin-rating-stars" data-admin-photo-rating-stars role="group" aria-label="Photo rating">
+                      <button type="button" class="bird-admin-rating-star" data-admin-photo-rating-star="1" aria-label="Rate 1 star">
+                        ★
+                      </button>
+                      <button type="button" class="bird-admin-rating-star" data-admin-photo-rating-star="2" aria-label="Rate 2 stars">
+                        ★
+                      </button>
+                      <button type="button" class="bird-admin-rating-star" data-admin-photo-rating-star="3" aria-label="Rate 3 stars">
+                        ★
+                      </button>
+                      <button type="button" class="bird-admin-rating-star" data-admin-photo-rating-star="4" aria-label="Rate 4 stars">
+                        ★
+                      </button>
+                      <button type="button" class="bird-admin-rating-star" data-admin-photo-rating-star="5" aria-label="Rate 5 stars">
+                        ★
+                      </button>
+                    </div>
+                  </label>
+                  <label>
+                    <span>Country</span>
+                    <input
+                      type="text"
+                      placeholder="United States"
+                      data-admin-photo-country
+                      list="bird-admin-country-suggestions"
+                    />
+                  </label>
+                  <label>
+                    <span>State / Province</span>
+                    <input
+                      type="text"
+                      placeholder="Florida or BC"
+                      data-admin-photo-state
+                      list="bird-admin-state-suggestions"
+                    />
+                  </label>
+                  <label>
+                    <span>County (US)</span>
+                    <input
+                      type="text"
+                      placeholder="Brevard"
+                      data-admin-photo-county
+                      list="bird-admin-county-suggestions"
+                    />
+                  </label>
+                  <label>
+                    <span>Location</span>
+                    <input
+                      type="text"
+                      placeholder="Merritt Island NWR, Florida"
+                      data-admin-photo-location
+                      list="bird-admin-location-suggestions"
+                    />
+                  </label>
+                  <label>
+                    <span>Trip</span>
+                    <input type="text" placeholder="Florida 2025" data-admin-photo-trip list="bird-admin-trip-suggestions" />
+                  </label>
+
+                  <div class="bird-admin-photo-form-actions">
+                    <button class="btn secondary" type="submit" data-admin-photo-submit>Add Photo</button>
+                    <button class="btn secondary" type="button" data-admin-photo-cancel hidden>Cancel Edit</button>
+                  </div>
+                </form>
+
+                <figure class="bird-admin-photo-edit-preview" data-admin-photo-edit-preview hidden>
+                  <img data-admin-photo-edit-preview-image alt="" loading="lazy" decoding="async" />
+                  <figcaption data-admin-photo-edit-preview-caption></figcaption>
+                </figure>
+
+                <div class="bird-admin-photo-list" data-admin-photo-list></div>
+                <datalist id="bird-admin-country-suggestions" data-admin-suggestions="country"></datalist>
+                <datalist id="bird-admin-state-suggestions" data-admin-suggestions="state"></datalist>
+                <datalist id="bird-admin-county-suggestions" data-admin-suggestions="county"></datalist>
+                <datalist id="bird-admin-location-suggestions" data-admin-suggestions="location"></datalist>
+                <datalist id="bird-admin-trip-suggestions" data-admin-suggestions="trip"></datalist>
+                <datalist id="bird-admin-species-suggestions" data-admin-suggestions="species"></datalist>
+              </section>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script id="bird-admin-seed" type="application/json" is:inline set:html={JSON.stringify(seedSpecies)}></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-app-compat.js" defer></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-auth-compat.js" defer></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-firestore-compat.js" defer></script>
+    <script is:inline src="/__/firebase/12.9.0/firebase-storage-compat.js" defer></script>
+    <script is:inline src="/__/firebase/init.js" defer></script>
+    <script is:inline src="/assets/js/site.js" defer></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/lite.umd.js" defer></script>
+    <script is:inline src="/assets/js/bird-admin-shared.js?v=20260322-1" defer></script>
+    <script is:inline src="/assets/js/birds-admin.js?v=20260322-1" defer></script>
+  </body>
+</html>

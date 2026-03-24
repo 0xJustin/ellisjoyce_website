@@ -1,0 +1,120 @@
+---
+import { renderRichText } from "@storyblok/astro";
+import { getLegacyPosts, type LegacyPost } from "../../data/legacyPosts";
+import { getLocalBlogPosts, type LocalBlogPost } from "../../data/localBlogEntries";
+import { getStoryblokBlogPosts, type StoryblokBlogPost } from "../../data/storyblokContent";
+
+export async function getStaticPaths() {
+  const legacyPosts = getLegacyPosts();
+  const legacyPaths = legacyPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+
+  const legacySlugs = new Set(legacyPosts.map((post) => post.slug));
+  const localPosts = getLocalBlogPosts();
+  const localPaths = localPosts
+    .filter((post) => !legacySlugs.has(post.slug))
+    .map((localPost) => ({
+      params: { slug: localPost.slug },
+      props: { localPost },
+    }));
+  const localSlugs = new Set(localPosts.map((post) => post.slug));
+  const storyblokPaths = (await getStoryblokBlogPosts())
+    .filter((post) => !legacySlugs.has(post.slug) && !localSlugs.has(post.slug))
+    .map((cmsPost) => ({
+      params: { slug: cmsPost.slug },
+      props: { cmsPost },
+    }));
+
+  return [...legacyPaths, ...localPaths, ...storyblokPaths];
+}
+
+const { post, localPost, cmsPost } = Astro.props as {
+  post?: LegacyPost;
+  localPost?: LocalBlogPost;
+  cmsPost?: StoryblokBlogPost;
+};
+
+const activeSection = post?.section ?? localPost?.section ?? cmsPost?.section ?? "Blog";
+const activeTitle = post?.title ?? localPost?.title ?? cmsPost?.title ?? "Post";
+const activeExcerpt = post?.excerpt ?? localPost?.excerpt ?? cmsPost?.excerpt ?? "Ellis-Joyce blog post.";
+const activePublishedLabel = post?.publishedLabel ?? localPost?.publishedLabel ?? cmsPost?.publishedLabel ?? "Date unavailable";
+
+const localBodyHtml = localPost?.bodyHtml ?? "";
+const cmsBodyHtml =
+  cmsPost?.bodyHtml ?? (cmsPost?.bodyRichText ? renderRichText(cmsPost.bodyRichText as any) : "");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{activeTitle} | Ellis-Joyce Blog</title>
+    <meta name="description" content={activeExcerpt} />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body>
+    <div class="page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/blog">Back to Blog</a>
+          <a class="nav-link" href="/photography">Photography</a>
+          <a class="nav-link" href="/weddinghome">Wedding Legacy</a>
+        </nav>
+      </header>
+
+      <main>
+        <article class="post-article" data-reveal>
+          <header class="post-article-head">
+            <p class="kicker">{activeSection}</p>
+            <h1>{activeTitle}</h1>
+            <p class="blog-post-date">{activePublishedLabel}</p>
+            <div class="cta-row">
+              <a class="btn secondary" href="/blog">Blog Index</a>
+              {post?.legacyPath && <a class="btn secondary" href={post.legacyPath}>Original URL</a>}
+              {localPost?.legacyPath && <a class="btn secondary" href={localPost.legacyPath}>Original URL</a>}
+              {cmsPost?.legacyPath && <a class="btn secondary" href={cmsPost.legacyPath}>Original URL</a>}
+            </div>
+          </header>
+
+          <div class="post-article-body">
+            {
+              post ? (
+                post.blocks.map((block) =>
+                  block.type === "html" ? (
+                    <section class="post-rich-block" set:html={block.html} />
+                  ) : (
+                    <figure class="post-image-block">
+                      <img src={block.src} alt={block.alt} loading="lazy" decoding="async" />
+                    </figure>
+                  ),
+                )
+              ) : cmsBodyHtml ? (
+                <section class="post-rich-block" set:html={cmsBodyHtml} />
+              ) : localBodyHtml ? (
+                <section class="post-rich-block" set:html={localBodyHtml} />
+              ) : (
+                <section class="post-rich-block">
+                  <p>This post is published, but no body content has been added yet.</p>
+                </section>
+              )
+            }
+          </div>
+        </article>
+      </main>
+    </div>
+    <script is:inline src="/assets/js/site.js" defer></script>
+  </body>
+</html>

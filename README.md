@@ -39,19 +39,42 @@ This repository contains a self-hosted static replacement for `www.ellis-joyce.c
 - Rewilding map prototype: `/blog/rewilding-map-prototype`
 - New photography hub: `/photography`
 - Bird atlas database: `/photography/birds`
+- Bird atlas local admin: `/photography/birds/admin`
 - Legacy wedding route examples: `/weddinghome`, `/details`, `/registry`
 - Legacy blog route examples: `/ellis-joyce/*`, `/ellisjoycemonthly/*`
 
 ## Bird atlas workflow
 1. Rebuild the taxonomy catalog (ABA + eBird phylogeny):
    - `scripts/build_bird_catalog.py`
-2. Mark seen species manually:
-   - edit `src/data/birds/personalStatus.ts`
-   - keys use eBird `speciesCode` when available (fallback is ABA alpha code)
-3. Add your photos:
-   - place files under `public/assets/images/birds/`
-   - register each photo record in `src/data/birds/personalPhotos.ts`
-4. Build and preview:
+2. Sync seen status from eBird (optional, generated file):
+   - direct profile parse (works only if eBird serves profile data without login):
+     - `npm run syncEbirdSeen -- --profile-url https://ebird.org/profile/NDYzNTMzOQ/world`
+   - CSV fallback (recommended if profile URL is login-gated):
+     - export life list CSV from eBird
+     - `npm run syncEbirdSeen -- --csv /path/to/ebird_lifelist.csv`
+   - output file: `src/data/birds/ebirdSeenStatus.ts`
+   - location output file: `src/data/birds/ebirdSeenLocations.ts` (county/state/country coverage for map "seen" mode, when CSV includes location columns)
+   - synced fields: `seen: true` plus earliest `firstSeenDate` detected in the source rows
+   - manual overrides in `src/data/birds/personalStatus.ts` always win
+3. Use the admin flow for status/photo edits:
+   - open `/photography/birds/admin`
+   - enter the admin password prompt
+   - sign in with Firebase email/password when prompted to enable live sync
+   - update `seen`, `rating (1-5)`, and notes per species
+   - changes are always saved in browser local storage
+   - signed-in sessions also sync status/photos to Firestore for live site updates without rebuild
+4. Add photos:
+   - choose a local file in admin and submit; the image uploads to Firebase Storage
+   - or provide an existing URL/path manually in the photo source field
+   - for map support, include `country`, `state`, and `county` fields on photo records
+5. Optional repository snapshot export:
+   - download `personalStatus.ts` and `personalPhotos.ts` from the admin toolbar
+   - replace `src/data/birds/personalStatus.ts` and `src/data/birds/personalPhotos.ts` when you want committed backups
+6. Firebase setup (first time):
+   - enable Email/Password in Firebase Authentication
+   - create at least one admin user in Firebase Auth
+   - deploy rules: `firebase deploy --only firestore:rules,storage`
+7. Build and preview:
    - `npm run build`
    - `npm run preview`
 

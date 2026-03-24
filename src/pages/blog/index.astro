@@ -1,0 +1,163 @@
+---
+import { getLegacyPosts } from "../../data/legacyPosts";
+import { getLocalBlogPosts } from "../../data/localBlogEntries";
+import { getStoryblokBlogPosts } from "../../data/storyblokContent";
+
+type BlogIndexEntry = {
+  slug: string;
+  title: string;
+  section: string;
+  category: "science" | "monthly";
+  excerpt: string;
+  publishedAt: string;
+  publishedLabel: string;
+  coverImage: string | null;
+  source: "legacy" | "local" | "storyblok";
+  legacyPath: string | null;
+};
+
+function classifyCategory(section: string): "science" | "monthly" {
+  return section.toLowerCase().includes("monthly") ? "monthly" : "science";
+}
+
+const legacyEntries: BlogIndexEntry[] = getLegacyPosts().map((post) => ({
+  slug: post.slug,
+  title: post.title,
+  section: post.section,
+  category: classifyCategory(post.section),
+  excerpt: post.excerpt,
+  publishedAt: post.publishedAt,
+  publishedLabel: post.publishedLabel,
+  coverImage: post.coverImage,
+  source: "legacy",
+  legacyPath: post.legacyPath,
+}));
+
+const legacySlugs = new Set(legacyEntries.map((post) => post.slug));
+
+const localEntries: BlogIndexEntry[] = getLocalBlogPosts()
+  .filter((post) => !legacySlugs.has(post.slug))
+  .map((post) => ({
+    slug: post.slug,
+    title: post.title,
+    section: post.section,
+    category: classifyCategory(post.section),
+    excerpt: post.excerpt,
+    publishedAt: post.publishedAt,
+    publishedLabel: post.publishedLabel,
+    coverImage: post.coverImage,
+    source: "local",
+    legacyPath: post.legacyPath,
+  }));
+
+const localSlugs = new Set(localEntries.map((post) => post.slug));
+
+const storyblokEntries: BlogIndexEntry[] = (await getStoryblokBlogPosts())
+  .filter((post) => !legacySlugs.has(post.slug) && !localSlugs.has(post.slug))
+  .map((post) => ({
+    slug: post.slug,
+    title: post.title,
+    section: post.section,
+    category: classifyCategory(post.section),
+    excerpt: post.excerpt,
+    publishedAt: post.publishedAt,
+    publishedLabel: post.publishedLabel,
+    coverImage: post.coverImage,
+    source: "storyblok",
+    legacyPath: post.legacyPath,
+  }));
+
+const posts = [...legacyEntries, ...localEntries, ...storyblokEntries].sort(
+  (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+);
+
+const newestPost = posts[0];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ellis-Joyce Blog</title>
+    <meta
+      name="description"
+      content="Migrated blog posts with preserved content and image placement from the original site, plus new CMS-managed posts."
+    />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body>
+    <div class="page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/photography">Photography</a>
+          <a class="nav-link" href="/weddinghome">Wedding Legacy</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="intro-panel" data-reveal>
+          <p class="eyebrow">Blog</p>
+          <h1>The Ellis-Joyce Blog</h1>
+          <p>A running archive of science notes and monthly updates.</p>
+          <div class="cta-row">
+            {newestPost && <a class="btn primary" href={`/blog/${newestPost.slug}`}>Read Latest Post</a>}
+          </div>
+        </section>
+
+        <section class="section" data-reveal>
+          <div class="blog-tab-bar" role="tablist" data-blog-tabs data-blog-default="science">
+            <button
+              class="blog-tab is-active"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              data-blog-tab="science"
+            >
+              Science + Activism
+            </button>
+            <button class="blog-tab" type="button" role="tab" aria-selected="false" data-blog-tab="monthly">
+              Monthly Updates
+            </button>
+          </div>
+          <div class="grid blog-post-list">
+            {
+              posts.map((post) => (
+                <article class="card blog-post-card" data-blog-category={post.category}>
+                  {post.coverImage && (
+                    <a class="blog-post-cover" href={`/blog/${post.slug}`} aria-label={`Read ${post.title}`}>
+                      <img src={post.coverImage} alt={`${post.title} cover image`} loading="lazy" decoding="async" />
+                    </a>
+                  )}
+                  <div class="blog-post-body">
+                    <p class="kicker">{post.section}</p>
+                    <h2>{post.title}</h2>
+                    <p>{post.excerpt}</p>
+                    <p class="blog-post-date">{post.publishedLabel}</p>
+                    <div class="post-preview-meta">
+                      <a href={`/blog/${post.slug}`}>Read post</a>
+                      {post.legacyPath && <a href={post.legacyPath}>Original URL</a>}
+                    </div>
+                  </div>
+                </article>
+              ))
+            }
+          </div>
+        </section>
+
+      </main>
+    </div>
+    <script is:inline src="/assets/js/site.js" defer></script>
+  </body>
+</html>
