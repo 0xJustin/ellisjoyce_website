@@ -37,6 +37,7 @@ This repository contains a self-hosted static replacement for `www.ellis-joyce.c
 - New blog index: `/blog`
 - Interactive demo: `/blog/interactive-neuroscience-demo`
 - Rewilding map prototype: `/blog/rewilding-map-prototype`
+- Big Day Optimizer wrapper: `/tools/big-day`
 - New photography hub: `/photography`
 - Bird atlas database: `/photography/birds`
 - Bird atlas local admin: `/photography/birds/admin`

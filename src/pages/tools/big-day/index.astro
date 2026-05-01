@@ -1,0 +1,96 @@
+---
+const optimizerUrl = import.meta.env.PUBLIC_BIG_DAY_OPTIMIZER_URL?.trim() || "https://big-day.ellis-joyce.com";
+const ebirdKeyUrl = "https://support.ebird.org/en/support/solutions/articles/48000838205-download-ebird-data";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Big Day Optimizer | Ellis-Joyce</title>
+    <meta
+      name="description"
+      content="Plan a one-day eBird route using checklist detection rates, travel time, and repeated chances for hard-to-get birds."
+    />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body>
+    <div class="page-wrap big-day-tool-page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/blog">Blog</a>
+          <a class="nav-link" href="/photography">Photography</a>
+        </nav>
+      </header>
+
+      <main class="big-day-tool-shell">
+        <section class="intro-panel big-day-tool-hero" data-reveal>
+          <p class="eyebrow">Birding route tool</p>
+          <h1>Big Day Optimizer</h1>
+          <p>
+            Build a one-day eBird route from checklist probabilities, travel time, and repeated chances for difficult
+            species.
+          </p>
+          <div class="cta-row">
+            <a class="btn primary" href="#big-day-app">Use the optimizer</a>
+            <a class="btn secondary" href={ebirdKeyUrl}>Get an eBird API key</a>
+          </div>
+        </section>
+
+        <section class="section big-day-tool-notes" data-reveal>
+          <article class="card">
+            <p class="kicker">Before you run it</p>
+            <h2>Use your own eBird key</h2>
+            <p>
+              The hosted optimizer does not include a shared API token. Paste your personal eBird API key into the
+              app when you run a route. The key is used for that Streamlit session and is not stored by this site.
+            </p>
+          </article>
+          <article class="card">
+            <p class="kicker">What it optimizes</p>
+            <h2>Expected species, not checklist length</h2>
+            <p>
+              The route score stacks probabilities across stops, so multiple 20% chances at a bird can matter more
+              than a single weak hotspot record.
+            </p>
+          </article>
+        </section>
+
+        <section class="section" id="big-day-app" data-reveal>
+          <div class="section-head big-day-tool-app-head">
+            <div>
+              <p class="kicker">Live app</p>
+              <h2 class="section-title">Plan a route</h2>
+            </div>
+            <a class="section-link" href={optimizerUrl}>Open in a new tab</a>
+          </div>
+          <div class="big-day-tool-frame-shell">
+            <iframe
+              src={optimizerUrl}
+              title="Big Day Optimizer Streamlit app"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+            ></iframe>
+          </div>
+          <p class="big-day-tool-frame-note">
+            If the embedded app does not load, open it directly in a new tab. Some browsers block third-party embeds.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <script is:inline src="/assets/js/site.js" defer></script>
+  </body>
+</html>
