@@ -3313,27 +3313,29 @@ input[type="range"] {
 }
 
 .big-day-tool-page-wrap {
-  width: min(1420px, calc(100vw - 1.8rem));
+  width: min(1760px, calc(100vw - 1rem));
 }
 
 .big-day-tool-shell {
   display: grid;
+  gap: 0.9rem;
 }
 
 .big-day-tool-hero {
-  max-width: 930px;
-  padding-bottom: 0.35rem;
+  max-width: none;
+  padding-bottom: 0.85rem;
 }
 
-.big-day-tool-notes {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.8rem;
+.big-day-tool-hero p {
+  max-width: 46rem;
 }
 
-.big-day-tool-notes .card {
-  border-top: 4px solid #3d6377;
-  background: rgba(255, 255, 255, 0.78);
+.big-day-tool-app-section {
+  margin-top: 0;
+}
+
+.big-day-tool-app-head {
+  margin-bottom: 0.65rem;
 }
 
 .big-day-tool-frame-shell {
@@ -3347,15 +3349,9 @@ input[type="range"] {
 .big-day-tool-frame-shell iframe {
   display: block;
   width: 100%;
-  min-height: min(1180px, 92vh);
+  min-height: min(1320px, 118vh);
   border: 0;
   background: #f4f6f2;
-}
-
-.big-day-tool-frame-note {
-  margin: 0.62rem 0 0;
-  color: var(--muted);
-  font: 500 0.74rem/1.4 "IBM Plex Mono", monospace;
 }
 
 @media (min-width: 880px) {
@@ -3543,11 +3539,7 @@ input[type="range"] {
     height: min(62vh, 460px);
   }
 
-  .big-day-tool-notes {
-    grid-template-columns: 1fr;
-  }
-
   .big-day-tool-frame-shell iframe {
-    min-height: 1050px;
+    min-height: 1150px;
   }
 }

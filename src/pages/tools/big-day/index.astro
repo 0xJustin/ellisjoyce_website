@@ -40,39 +40,19 @@ const ebirdKeyUrl = "https://support.ebird.org/en/support/solutions/articles/480
           <p class="eyebrow">Birding route tool</p>
           <h1>Big Day Optimizer</h1>
           <p>
-            Build a one-day eBird route from checklist probabilities, travel time, and repeated chances for difficult
-            species.
+            Plan a one-day eBird route from checklist probabilities, travel time, and repeated chances for difficult
+            birds.
           </p>
           <div class="cta-row">
-            <a class="btn primary" href="#big-day-app">Use the optimizer</a>
-            <a class="btn secondary" href={ebirdKeyUrl}>Get an eBird API key</a>
+            <a class="btn primary" href={ebirdKeyUrl}>Get an eBird API key</a>
           </div>
         </section>
 
-        <section class="section big-day-tool-notes" data-reveal>
-          <article class="card">
-            <p class="kicker">Before you run it</p>
-            <h2>Use your own eBird key</h2>
-            <p>
-              The hosted optimizer does not include a shared API token. Paste your personal eBird API key into the
-              app when you run a route. The key is used for that Streamlit session and is not stored by this site.
-            </p>
-          </article>
-          <article class="card">
-            <p class="kicker">What it optimizes</p>
-            <h2>Expected species, not checklist length</h2>
-            <p>
-              The route score stacks probabilities across stops, so multiple 20% chances at a bird can matter more
-              than a single weak hotspot record.
-            </p>
-          </article>
-        </section>
-
-        <section class="section" id="big-day-app" data-reveal>
+        <section class="section big-day-tool-app-section" id="big-day-app" data-reveal>
           <div class="section-head big-day-tool-app-head">
             <div>
               <p class="kicker">Live app</p>
-              <h2 class="section-title">Plan a route</h2>
+              <h2 class="section-title">Run the optimizer</h2>
             </div>
             <a class="section-link" href={optimizerUrl}>Open in a new tab</a>
           </div>
@@ -84,9 +64,6 @@ const ebirdKeyUrl = "https://support.ebird.org/en/support/solutions/articles/480
               referrerpolicy="strict-origin-when-cross-origin"
             ></iframe>
           </div>
-          <p class="big-day-tool-frame-note">
-            If the embedded app does not load, open it directly in a new tab. Some browsers block third-party embeds.
-          </p>
         </section>
       </main>
     </div>
