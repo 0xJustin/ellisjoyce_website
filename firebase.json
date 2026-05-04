@@ -41,6 +41,24 @@
         ]
       },
       {
+        "source": "/tools/big-day",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "/tools/big-day/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
         "source": "/assets/css/**",
         "headers": [
           {
