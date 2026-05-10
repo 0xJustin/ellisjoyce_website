@@ -59,6 +59,24 @@
         ]
       },
       {
+        "source": "/tools/migrant-hotspots",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "/tools/migrant-hotspots/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
         "source": "/assets/css/**",
         "headers": [
           {

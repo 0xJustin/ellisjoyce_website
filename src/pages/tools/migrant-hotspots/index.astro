@@ -1,0 +1,74 @@
+---
+const migrantAppUrl =
+  import.meta.env.PUBLIC_MIGRANT_HOTSPOTS_URL?.trim() ||
+  "https://migrant-hotspots-356360771665.us-east1.run.app";
+const ebirdKeyUrl = "https://support.ebird.org/en/support/solutions/articles/48000838205-download-ebird-data";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Migrant Hotspot Dashboard | Ellis-Joyce</title>
+    <meta
+      name="description"
+      content="Compare county eBird hotspots by warbler variety, abundance, checklist time, and photo signal."
+    />
+    <link rel="icon" type="image/webp" href="/assets/images/branding/favicon.webp" />
+    <link rel="stylesheet" href="/assets/css/site.css" />
+  </head>
+  <body>
+    <div class="page-wrap big-day-tool-page-wrap">
+      <header class="site-nav" data-reveal>
+        <a class="wordmark-link compact" href="/" aria-label="Home">
+          <img
+            class="wordmark-logo"
+            src="/assets/images/branding/mountaineer.webp"
+            alt="Gwendolyn and Justin Ellis-Joyce"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/blog">Blog</a>
+          <a class="nav-link" href="/photography">Photography</a>
+        </nav>
+      </header>
+
+      <main class="big-day-tool-shell">
+        <section class="intro-panel big-day-tool-hero" data-reveal>
+          <p class="eyebrow">Birding data tool</p>
+          <h1>Migrant Hotspot Dashboard</h1>
+          <p>
+            Compare county hotspots by warbler variety, abundance, checklist time, and photo signal.
+          </p>
+          <div class="cta-row">
+            <a class="btn primary" href={ebirdKeyUrl}>Get an eBird API key</a>
+          </div>
+        </section>
+
+        <section class="section big-day-tool-app-section" id="migrant-hotspot-app" data-reveal>
+          <div class="section-head big-day-tool-app-head">
+            <div>
+              <p class="kicker">Live app</p>
+              <h2 class="section-title">Rank migrant hotspots</h2>
+            </div>
+            <a class="section-link" href={migrantAppUrl}>Open in a new tab</a>
+          </div>
+          <div class="big-day-tool-frame-shell">
+            <iframe
+              src={migrantAppUrl}
+              title="Migrant Hotspot Dashboard Streamlit app"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+            ></iframe>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script is:inline src="/assets/js/site.js" defer></script>
+  </body>
+</html>
